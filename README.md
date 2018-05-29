@@ -1,0 +1,1 @@
+# image-visit-template
