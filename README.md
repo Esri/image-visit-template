@@ -5,7 +5,7 @@ With the Image Visit (beta) configurable template, create apps that allow users 
 
 ## Description
 Image Visit (beta) is a configurable app template that allows users to quickly review the attributes of a predetermined sequence of locations in imagery. The app optimizes workflows by loading the next image while the user is still viewing the current image, reducing the delay caused by waiting for the next image to be returned from the server. 
-##Features
+## Features
 * The app uses a "Visit" layer (an editable hosted feature layer) or a web map's bookmarks to navigate through a predetermined sequence of locations.
 * An optional "Notes" layer (a second editable hosted feature layer) can be used to add or edit features associated with the Visit locations.
 * If you're using a Visit layer for navigation, an optional "Status" field can be selected that allows users to set the status of each Visit location as it's processed.
