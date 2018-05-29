@@ -1,0 +1,40 @@
+<div style="margin: 5px;overflow: hidden;">
+    <div id="filterVisitStatus" style="display: none;padding: 0.8em;">
+        <label for="selectFilter" class="titleLabel">${config.i18n.visit.filter}: </label>
+        <select id="selectFilter" data-dojo-type="dijit/form/Select"></select>
+    </div>
+    <div id="visitAttributeContainer" style="display: none;">
+        <button id="visitAttributeBtn" class="titleHeader" role="button">
+            <span class="titleLabel">${config.i18n.visit.visit}</span>
+            <span class="launchpad-icon-arrow-right listExpandBtn"></span>
+        </button>
+        <div id="visitAttributesContent" style="display: none;">
+            <div id="visitContentDiv" data-dojo-type="dijit/layout/ContentPane" 
+                 data-dojo-props="region:'center'"></div>
+            <div id="setStatusField" style="display: none;padding: 0.8em;"><button data-dojo-type="dijit/form/Button" id="saveVisitBtn" style="margin-left:5px;">${config.i18n.visit.save}</button></div>
+
+        </div>
+    </div>
+    <div id="bookmarkName" style="padding: 0.8em;display: none;"></div>
+    <div id="imageAttributeContainer" style="display: none;">
+        <button id="imageAttributeBtn" class="titleHeader" role="button">
+            <span class="titleLabel">${config.i18n.visit.image}</span>
+            <span class="launchpad-icon-arrow-right listExpandBtn"></span>
+        </button>
+        <div id="imageAttributesContent" data-dojo-type="dijit/layout/ContentPane" 
+             data-dojo-props="region:'center'" style="display: none;"></div>
+    </div>
+    <div id="editCheckbox" style="display: none;padding: 0.8em;"><input data-dojo-type="dijit/form/CheckBox" id="editToggle" /><label for="editToggle" class="titleLabel">${config.i18n.visit.edit}</label></div>
+    <div id="errorEditor" style="color: #ee0000;"></div>
+    <div id="notesEditor" style="padding: 0.8em;display: none;">
+        <span id="textEditor" class="titleLabel">${config.i18n.visit.addText}</span>
+        <div id="templateDiv" style="margin:5px;display: none;"></div>
+        <div id="attributeInspectorDiv" data-dojo-type="dijit/layout/ContentPane" 
+             data-dojo-props="region:'center'" style="display: block;"></div>
+        <div id="editorDiv"></div>
+    </div>
+    <div style="padding: 0.8em;">
+        <button data-dojo-type="dijit/form/Button" disabled id="prevBtn" style="float: left;">${config.i18n.visit.prev}</button>
+        <button data-dojo-type="dijit/form/Button" disabled id="nextBtn" style="float: right;">${config.i18n.visit.next}</button>
+    </div>
+</div>
