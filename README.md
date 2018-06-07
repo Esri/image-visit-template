@@ -1,7 +1,7 @@
 # image-visit-template
 Image Visit (beta) is a configurable app template that allows users to quickly review the attributes of a predetermined sequence of locations in imagery. The app optimizes workflows by loading the next image while the user is still viewing the current image, reducing the delay caused by waiting for the next image to be returned from the server. 
 
-![App](https://github.com/ArcGIS/image-visit-template/blob/master/ImageVisit.png)
+![App](ImageVisit.png)
 
 ## Features
 * The app uses a "Visit" layer (an editable hosted feature layer) or a web map's bookmarks to navigate through a predetermined sequence of locations.
@@ -59,6 +59,6 @@ http://www.apache.org/licenses/LICENSE-2.0.
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-A copy of the license is available in the repository's [license.txt](https://github.com/Esri/image-visit-template/blob/master/license.txt) file.
+A copy of the license is available in the repository's [license](https://github.com/Esri/image-visit-template/blob/master/license) file.
 
 
