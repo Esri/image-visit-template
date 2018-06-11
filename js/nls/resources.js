@@ -25,13 +25,6 @@ define({
         basemap: {
             title: "Basemap Gallery"
         },
-        layer: {
-            title: "Layer Toggle",
-            image: "Imagery",
-            visit: "Visit",
-            notes: "Notes",
-            error: "No layers present in the map."
-        },
         visit: {
             title: "Visit",
             visit: "Visit Attributes",
@@ -42,7 +35,19 @@ define({
             error: "Access denied. Layer cannot be edited.",
             edit: "Edit Notes",
             save: "Save",
-            filter: "Filter by visit status"
+            filter: "Filter by visit status",
+            all: "All",
+            record: "Record",
+            of: "of",
+            error1:"Please enter a valid numeric value.",
+            layer: "Layer Toggle",
+            imageLayer: "Imagery",
+            visitLayer: "Visit",
+            notesLayer: "Notes",
+            layerError: "No layers present in the map.",
+            follow: "Follow up",
+            okay: "Okay",
+            noStat: "No Status"
         },
         measurement: {
             title: "Image Measurement",

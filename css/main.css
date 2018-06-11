@@ -304,6 +304,15 @@ body {
     max-height: 40vh;
     width: 100%;
 }
+.claro .dijitContentPane {
+    padding: 0px;
+}
+.esriViewPopup .header {
+    font-weight: normal;
+}
+.esriAttributeInspector .atiLayerName {
+display: none;
+}
 #dockContainer {
     margin-left: 0px;
     top: 39px;
@@ -422,19 +431,7 @@ body {
     border-top: 6px solid transparent;
     border-right: 6px solid #222;
 }
-.LayerSwipe .vertical {
-    background-color: azure;
-    width: 6px;
-    z-index: 1;
-}
-.LayerSwipe .horizontal {
-    background-color: azure;
-    height: 2px;
-}
-.LayerSwipe .vertical .handle{
-    background-color: #0080C0;
-    border: 0px solid transparent;
-}
+
 .claro .dijitDialog {
     background: #fff;
     border: 0 none;
@@ -736,7 +733,7 @@ body {
 .iconHeight {
     height: 15px;
 }
-#saveVisitBtn,#nextBtn,#addBookmark,#prevBtn,#submitAgolBtn,#exportBtn, #applyAOI, #resetAOI,#dropDownImageList,#dropDownImageListRight,#refreshImageSliderBtn,#refreshImageSliderBtnRight{
+#saveVisitBtn,#nextBtn,#prevBtn{
     text-align: center;
     background: #fff;
     /* border: 1px solid #ddd;*/
@@ -752,7 +749,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-#saveVisitBtn:hover,#nextBtn:hover,#addBookmark:hover,#prevBtn:hover,#dropDownImageList:hover,#dropDownImageListRight:hover,#submitAgolBtn:hover,#exportBtn:hover, #refreshImageSliderBtn:hover,#refreshImageSliderBtnRight:hover{
+#saveVisitBtn:hover,#nextBtn:hover,#prevBtn:hover{
     background: #ddd;
 }
 .esriAttributeInspector .atiButton{
@@ -798,24 +795,6 @@ body {
     line-height: 40px;
 }
 
-#layerContainer {
-    display: block;
-    width: 30px;
-    height: 30px;
-    right: 20px;
-    top: 170px;
-    z-index: 10;
-    background: rgb(102,102,102);
-    cursor: pointer;
-    position: absolute;
-    border: 1px solid #999;
-}
-/*.basemapIcon:hover{
-    background-color: #008299;;
-}
-.basemapSelected{
-    background-color:#008299;
-}*/
 
 
 .closeContainerButton {
@@ -912,62 +891,7 @@ body {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=65)";
     filter: alpha(opacity=65);
 }
-/*
-.BasemapToggle .toggleButton {
-    background: rgba(255,255,255,0.7);
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-    -moz-box-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-    -webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-    box-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-    cursor: pointer;
-    border:none;
-    border-radius:0 !important;
-    padding:0;
-}
-.BasemapToggle .basemapImageContainer {
-    position: relative;
-}
-.BasemapToggle .basemapImage {
-    width: 65px;
-    height: 65px;
-    overflow: hidden;
-}
-.BasemapToggle .basemapImage .basemapBG {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-repeat: no-repeat;
-    background-position: center center;
-    border-radius: 0 !important;
-    padding:0;
-}
-.BasemapToggle .basemapTitle {
-    display: block;
-    width: 100%;
-    color: #4c4c4c;
-    margin: 0;
-    font-size: 10px;
-    line-height: 1.2;
-    padding: 4px;
-    background: #fff;
-    background: rgba(255,255,255,0.7);
-    text-align: center;
-    position: absolute;
-    bottom: 0;
-    z-index: 2;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    border-radius: 0;
-}
 
-.BasemapToggle .basemapTitle {
-    font-family: "Times New Roman", Georgia, "Book Antiqua", serif;
-}*/
 .loading-indicator {
     /* Loading status */
     display: none;
@@ -1196,7 +1120,7 @@ body {
     font-size:0.8em;
     background: transparent;
     text-align: center;
-    width: 100%;
+    width: 110px;
     overflow: hidden;
     display: block;
 }

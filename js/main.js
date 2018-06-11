@@ -34,7 +34,7 @@ define([
     "dijit/Tooltip",
     "esri/arcgis/utils",
     "application/MapUrlParams",
-    "application/LayerToggle", "application/Basemap", "application/Measurement", "application/Visit",
+     "application/Basemap", "application/Measurement", "application/Visit",
     "dojo/domReady!"
 ], function (
         declare, lang, kernel,
@@ -43,7 +43,7 @@ define([
         dom, ArcGISImageServiceLayer, domConstruct, domStyle, html, domClass, Dialog, parser,
         registry, visitHtml, Tooltip,
         arcgisUtils,
-        MapUrlParams, LayerToggle, Basemap, Measurement, Visit
+        MapUrlParams, Basemap, Measurement, Visit
         ) {
     return declare(null, {
         config: {},
@@ -132,8 +132,6 @@ define([
             style.type = "text/css";
             document.getElementsByTagName('head')[0].appendChild(style);
             var cssRules = {".titleBar": "width: 100%;height: 39px;background-color:" + this.config.widgetTitleColor + ";color:white;font-size: 1.3em;font-weight: bolder;",
-                ".layerIcon:hover": "background-color: " + this.config.toolsIconColor + ";",
-                ".layerSelected": "background-color: " + this.config.toolsIconColor + ";",
                 ".toolContainers:hover": "background-color: " + this.config.toolsIconColor + ";",
                 ".selected-widget": "background-color: " + this.config.toolsIconColor + ";",
                 ".claro .dijitDialogTitleBar": "background: " + this.config.widgetTitleColor + ";border: 0 none;min-width:10em;border-bottom: 0 none;padding: 7px 10px;text-align: center;line-height: 1em;-webkit-box-sizing: content-box;box-sizing: content-box;font-weight: bolder;height:1em"
@@ -204,11 +202,7 @@ define([
                     this.setupBasemap();
                 } else
                     domStyle.set("basemapContainer", "display", "none");
-                if (this.config.layerFlag) {
-                    domStyle.set("layerContainer", "display", "block");
-                    this.setupLayer();
-                } else
-                    domStyle.set("layerContainer", "display", "none");
+                
                 if (this.config.measurementFlag) {
                     this.dockToolsActive++;
                     this.setupImageMeasurement();
@@ -347,6 +341,9 @@ define([
                 height: basemapImageH
 
             });
+            query(".esriBasemapGalleryLabelContainer").style({
+                width: basemapImageW
+            });
 
             query(".dijitSliderDecrementIconH").style({
                 width: sliderBtnWH,
@@ -473,55 +470,6 @@ define([
             this.basemapFunction = new Basemap({map: this.map});
             this.addClickEvent("basemapContainer", this.basemapFunction, "basemapNode");
         },
-        setupLayer: function () {
-
-            var layerDialog = new Dialog({
-                title: this.config.i18n.layer.title,
-                content: "<div id='layerDiv' style='overflow:hidden;height:95%;'></div>",
-                style: "background-color:white;width:auto;height:auto;",
-                id: "layerDialog",
-                draggable: false
-            });
-            layerDialog.closeButtonNode.tabIndex = 0;
-            new Tooltip({
-                connectId: ["layerContainer"],
-                label: this.config.i18n.layer.title,
-                position: ['before']
-            });
-            dojo.connect(layerDialog, "hide", lang.hitch(this, function () {
-                domClass.remove("layerIconNode", "layerSelected");
-
-            }));
-            document.getElementById("layerIconNode").children[0].alt = this.config.i18n.layer.title;
-            if (window.document.dir === "rtl") {
-                document.getElementById("layerContainer").style.left = "20px";
-                document.getElementById("layerContainer").style.right = "auto";
-            }
-            this.layerFunction = new LayerToggle({map: this.map, "imageLayer": this.config.imageLayer, "visitLayer": this.config.visitLayer, "notesLayer": this.config.notesLayer});
-            this.layerFunction.postCreate();
-            on(dom.byId("layerContainer"), "click, keyup", lang.hitch(this, function (event) {
-                if (event.type === "click" || event.which === 13 || event.which === 32) {
-                    if (domClass.contains("layerIconNode", "layerSelected")) {
-                        domClass.remove("layerIconNode", "layerSelected");
-                        if (registry.byId("layerDialog").open)
-                            registry.byId("layerDialog").hide();
-                    } else {
-                        domClass.add("layerIconNode", "layerSelected");
-                        registry.byId("layerDialog").show();
-                        domConstruct.destroy("layerDialog_underlay");
-                        if (window.document.dir === "ltr") {
-                            domStyle.set("layerDialog", "left", "auto");
-                            domStyle.set("layerDialog", "right", "20px");
-                        } else
-                        {
-                            domStyle.set("layerDialog", "left", "20px");
-                            domStyle.set("layerDialog", "right", "auto");
-                        }
-                        domStyle.set("layerDialog", "top", "220px");
-                    }
-                }
-            }));
-       },
         closeOtherWidgets: function () {
             if (this.openedWidget) {
                 dom.byId(this.openedWidget).click();
@@ -560,14 +508,17 @@ define([
                     notesFlag: this.config.userNotesFlag,
                     zoomLevel: this.config.zoomLevel,
                     notesMode: this.config.notesMode,
-                    imageFilter: this.config.imageFilterFlag
+                    imageFilter: this.config.imageFilterFlag,
+                    visitStatusFilter: this.config.visitStatusFilter,
+                    layerToggle: this.config.layerFlag        
                 };
-                this.visitFunction = new Visit({map: this.map, config: temp, i18n: this.config.i18n.visit, itemInfo: this.config.itemInfo.itemData});
+                this.visitFunction = new Visit({map: this.map, config: temp, i18n: this.config.i18n.visit, itemInfo: this.config.itemInfo.itemData, main: this});
                 this.addClickEvent("visitContainer", this.visitFunction, "visitNode");
                 if (window.document.dir === "rtl") {
                     var list = document.getElementsByClassName("listExpandBtn");
                     list[0].style.float = "left";
                     list[1].style.float = "left";
+                    list[2].style.float = "left";
                 }
             }
         },
@@ -716,10 +667,7 @@ define([
                 "border-color": bgColor,
                 "opacity": bgOpacity
             });
-            query("#layerContainer").style({
-                "background": this.config.background,
-                opacity: this.config.backgroundOpacity
-            });
+            
 
 
 

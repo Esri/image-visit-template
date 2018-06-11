@@ -21,7 +21,7 @@ define([
     "dojo/dom-class",
     "dojo/dom", "esri/renderers/jsonUtils", 'dojo/json', "dojo/_base/array",
     "esri/dijit/editing/Editor",
-    "esri/dijit/editing/TemplatePicker", "esri/dijit/AttributeInspector",
+    "esri/dijit/editing/TemplatePicker", 
     "dojo/on", "dojo/query",
     "esri/layers/MosaicRule",
     "esri/tasks/query",
@@ -30,23 +30,16 @@ define([
     "dojo/date/locale",
     "dojo/dom-construct",
     "esri/graphic",
-    "esri/symbols/SimpleLineSymbol",
-    "esri/symbols/SimpleFillSymbol",
-    "esri/Color",
-    "esri/InfoTemplate",
-    "esri/geometry/mathUtils",
     "dojo/dom-style",
-    "esri/layers/ArcGISImageServiceLayer", "esri/layers/FeatureLayer",
-    "esri/layers/ImageServiceParameters",
-    "esri/tasks/ImageServiceIdentifyTask",
-    "esri/tasks/ImageServiceIdentifyParameters",
-    "esri/geometry/Polygon", "esri/SpatialReference",
+    "esri/layers/FeatureLayer",
+    "esri/geometry/Polygon", "esri/SpatialReference","esri/tasks/ImageServiceIdentifyParameters","esri/tasks/IdentifyTask",
     "esri/geometry/Point",
     "esri/request", "dijit/Tooltip",
     "dijit/form/Select",
     "dijit/form/Button",
-    "dijit/form/NumberSpinner",
     "dijit/form/CheckBox",
+    "dijit/form/NumberSpinner",
+    "dijit/form/NumberTextBox",
     "dijit/form/TextBox",
     "dijit/form/DropDownButton",
     "dijit/TooltipDialog",
@@ -55,10 +48,10 @@ define([
         domClass,
         dom, rendererJsonUtils, Json, array,
         Editor,
-        TemplatePicker, AttributeInspector,
+        TemplatePicker,
         on, query,
         MosaicRule,
-        Query, QueryTask, Extent, locale, domConstruct, Graphic, SimpleLineSymbol, SimpleFillSymbol, Color, InfoTemplate, mathUtils, domStyle, ArcGISImageServiceLayer, FeatureLayer, ImageServiceParameters, ImageServiceIdentifyTask, ImageServiceIdentifyParameters, Polygon, SpatialReference, Point, esriRequest, Tooltip, Select, Button) {
+        Query, QueryTask, Extent, locale, domConstruct, Graphic, domStyle,FeatureLayer,Polygon, SpatialReference,ImageServiceIdentifyParameters,IdentifyTask, Point, esriRequest, Tooltip, Select, Button,CheckBox) {
 
     return declare("application.SingleLayerViewer", [Evented], {
         constructor: function (parameters) {
@@ -66,28 +59,39 @@ define([
                 map: null,
                 config: null,
                 i18n: null,
-                itemInfo: null
+                itemInfo: null,
+                main: null
             };
             lang.mixin(this, defaults, parameters);
         },
         timeFormats: ["shortDateShortTime", "shortDateLEShortTime", "shortDateShortTime24", "shortDateLEShortTime24", "shortDateLongTime", "shortDateLELongTime", "shortDateLongTime24", "shortDateLELongTime24"],
         visitPopupFields: [],
         imageryPopupFields: [],
+        notesAttributes: {},
         postCreate: function () {
             document.getElementById("visitAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "visit"));
             document.getElementById("imageAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "image"));
+            document.getElementById("layerAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "layer"));
             registry.byId("nextBtn").on("click", lang.hitch(this, function () {
                 if (this.recordIndex < this.features.length - 1) {
                     this.recordIndex++;
-                    this.zoomToRecord("next");
+                    if(registry.byId("recordIndex").get("value") !== this.recordIndex + 1)
+                    registry.byId("recordIndex").set("value", this.recordIndex + 1);
+                    else
+                    this.moveToNewRecord(this.recordIndex + 1);    
                 }
             }));
+
             registry.byId("prevBtn").on("click", lang.hitch(this, function () {
                 if (this.recordIndex > 0) {
                     this.recordIndex--;
-                    this.zoomToRecord("prev");
+                    if(registry.byId("recordIndex").get("value") !== this.recordIndex + 1)
+                    registry.byId("recordIndex").set("value", this.recordIndex + 1);
+                    else
+                    this.moveToNewRecord(this.recordIndex + 1);    
                 }
             }));
+            registry.byId("recordIndex").on("change", lang.hitch(this, this.moveToNewRecord));
             registry.byId("editToggle").on("change", lang.hitch(this, function (value) {
                 if (value) {
                     domStyle.set("notesEditor", "display", "block");
@@ -97,12 +101,15 @@ define([
                     this._destroyEditor();
                 }
             }));
-            registry.byId("selectFilter").on("change", lang.hitch(this, this.getFeatures));
+
             registry.byId("saveVisitBtn").on("click", lang.hitch(this, this.updateVisitLayer));
             this.imageryLayer = this.config.imageLayer.id ? this.map.getLayer(this.config.imageLayer.id) : null;
             this.visitLayer = this.config.visitLayer.id ? this.map.getLayer(this.config.visitLayer.id) : null;
+            this.notesLayer = this.config.notesLayer.id ? this.map.getLayer(this.config.notesLayer.id) : null;
+            if(this.config.layerToggle)
+                domStyle.set("layerContainer","display","block");
             if (this.imageryLayer) {
-                domStyle.set("imageAttributeContainer", "display", "block");
+                 this.createCheckBox("imageryLayer", this.i18n.imageLayer);
                 this.defaultMosaicRule = (this.imageryLayer.mosaicRule || this.imageryLayer.defaultMosaicRule || "");
                 var fieldInfos = this.imageryLayer.infoTemplate && this.imageryLayer.infoTemplate.info && this.imageryLayer.infoTemplate.info.fieldInfos ? this.imageryLayer.infoTemplate.info.fieldInfos : [];
                 for (var a in fieldInfos) {
@@ -110,14 +117,14 @@ define([
                         this.imageryPopupFields.push(fieldInfos[a].fieldName);
                     }
                 }
-               
+                if (this.imageryPopupFields.length > 0)
+                    domStyle.set("imageAttributeContainer", "display", "block");
+                else
+                    domStyle.set("imageAttributeContainer", "display", "none");
             }
+
             if (this.visitLayer) {
-                domStyle.set("visitAttributeContainer", "display", "block");
-                /*   this.visitLayer.on("selection-complete", lang.hitch(this, function(result){
-                 this.fillVisitAttributes(result);
-                 
-                 }));*/
+                 this.createCheckBox("visitLayer", this.i18n.visitLayer);
                 for (var c in this.itemInfo.operationalLayers) {
                     if (this.itemInfo.operationalLayers[c].id === this.config.visitLayer.id) {
                         if (this.itemInfo.operationalLayers[c].layerDefinition)
@@ -138,8 +145,13 @@ define([
                 var fieldInfos = this.visitLayer.infoTemplate && this.visitLayer.infoTemplate.info && this.visitLayer.infoTemplate.info.fieldInfos ? this.visitLayer.infoTemplate.info.fieldInfos : [];
                 var options = this.createStatusList();
                 if (options.length > 0) {
+                    registry.byId("selectFilter").addOption({label: this.i18n.all, value: "All"});
                     for (var a in options) {
                         registry.byId("selectFilter").addOption({label: options[a].label, value: options[a].value});
+                    }
+                    if (this.config.visitStatusFilter && this.config.visitStatusFilter !== registry.byId("selectFilter").get("value")){
+                        var queryFlag = true;
+                        registry.byId("selectFilter").set("value", this.config.visitStatusFilter);
                     }
                     domStyle.set("filterVisitStatus", "display", "block");
                 }
@@ -149,8 +161,17 @@ define([
                     }
                     if (this.config.statusField && fieldInfos[a].fieldName === this.config.statusField && fieldInfos[a].isEditable)
                         var editStatus = true;
+                    if (this.config.visitField && fieldInfos[a].fieldName === this.config.visitField && fieldInfos[a].visible)
+                        var visitFieldFlag = true;
+                    
                 }
-
+                if (this.visitPopupFields.length > 0) {
+                    domStyle.set("visitAttributeContainer", "display", "block");
+                    document.getElementById("visitAttributeBtn").click();
+                } else
+                    domStyle.set("visitAttributeContainer", "display", "none");
+                if (!visitFieldFlag)
+                    this.visitPopupFields.push(this.config.visitField);
                 if (this.config.statusField && editStatus && options.length > 0) {
                     new Select({
                         options: options
@@ -158,46 +179,69 @@ define([
                     domStyle.set("setStatusField", "display", "block");
                 }
             }
-             if (this.config.imageFilter && this.config.imageField && this.config.visitField && this.imageryLayer && this.visitLayer) {
-                    for (var a in this.imageryLayer.fields) {
-                        if (this.imageryLayer.fields[a].name === this.config.imageField) {
-                            this.config.imageFieldType = this.imageryLayer.fields[a].type;
-                            break;
+
+            if (this.notesLayer) {
+                 this.createCheckBox("notesLayer", this.i18n.notesLayer);
+                var fieldInfos = this.notesLayer.infoTemplate && this.notesLayer.infoTemplate.info && this.notesLayer.infoTemplate.info.fieldInfos ? this.notesLayer.infoTemplate.info.fieldInfos : [];
+                for (var a in fieldInfos) {
+                    if (fieldInfos[a].visible && fieldInfos[a].isEditable) {
+                        for (var b in this.notesLayer.fields) {
+                            if (this.notesLayer.fields[b].name === fieldInfos[a].fieldName) {
+                                this.notesAttributes[fieldInfos[a].fieldName] = this.notesLayer.fields[b].defaultValue;
+                                break;
+                            } else
+                                this.notesAttributes[fieldInfos[a].fieldName] = "";
                         }
                     }
-                    for (var a in this.visitLayer.fields) {
-                        if (this.visitLayer.fields[a].name === this.config.visitField) {
-                            this.config.visitFieldType = this.visitLayer.fields[a].type;
-                            break;
-                        }
+
+                }
+            }
+
+
+            if (this.config.imageFilter && this.config.imageField && this.config.visitField && this.imageryLayer && this.visitLayer) {
+                for (var a in this.imageryLayer.fields) {
+                    if (this.imageryLayer.fields[a].name === this.config.imageField) {
+                        this.config.imageFieldType = this.imageryLayer.fields[a].type;
+                        break;
                     }
-                    if (this.config.imageFieldType !== this.config.visitFieldType)
-                        this.config.imageFilter = false;
-                }else
+                }
+                for (var a in this.visitLayer.fields) {
+                    if (this.visitLayer.fields[a].name === this.config.visitField) {
+                        this.config.visitFieldType = this.visitLayer.fields[a].type;
+                        break;
+                    }
+                }
+                if (this.config.imageFieldType !== this.config.visitFieldType)
                     this.config.imageFilter = false;
+            } else
+                this.config.imageFilter = false;
+
             this.templateLayers = [];
             this._layerInfoParamArrayUseForRervertRenderer = [];
+
             if (this.config.notesFlag)
                 this.setupEditor();
             else {
                 this.config.notesMode = null;
+                this.notesLayer = null;
             }
 
             var popup = this.map.infoWindow;
 
-
-            /*  connect.connect(popup, "onSelectionChange", function() {
-             //   displayPopupContent(popup.getSelectedFeature());
-             this.showAttributes(popup);
-             });*/
             connect.connect(popup, "onSetFeatures", lang.hitch(this, function () {
                 this.showAttributes(popup);
             }));
-            /* connect.connect(popup,"onShow", lang.hitch(this, function(){
-             console.log(popup.getSelectedFeature());
-             }));*/
-            this.getFeatures();
 
+            registry.byId("selectFilter").on("change", lang.hitch(this, this.getFeatures));
+            if(!queryFlag)
+            this.getFeatures();
+            this.main.resizeTemplate();
+        },
+        moveToNewRecord: function(value){
+            if(value && value >0 && value <= this.features.length) {
+                    this.recordIndex = value - 1;
+                    this.zoomToRecord();
+            }
         },
         expandMenu: function (id) {
             var node = document.getElementById(id + "AttributeBtn").children[1];
@@ -216,14 +260,15 @@ define([
             if (this.visitLayer) {
                 this.queryCountFeatureService();
             } else if (this.itemInfo.bookmarks) {
-                domStyle.set("bookmarkName","display","block");
+                domStyle.set("bookmarkName", "display", "block");
                 this.readBookmarks();
             }
         },
         queryCountFeatureService: function () {
             var query = new Query();
             if (domStyle.get("filterVisitStatus", "display") === "block") {
-                var statusFilter = this.config.statusField + " = '" + registry.byId("selectFilter").get("value") + "'";
+                if (registry.byId("selectFilter").get("value") !== "All")
+                    var statusFilter = this.config.statusField + " = '" + registry.byId("selectFilter").get("value") + "'";
             }
             if (statusFilter) {
                 if (this.filterVisit)
@@ -247,7 +292,8 @@ define([
             if (this.index < this.noOfRecords) {
                 var query = new Query();
                 if (domStyle.get("filterVisitStatus", "display") === "block") {
-                    var statusFilter = this.config.statusField + " = '" + registry.byId("selectFilter").get("value") + "'";
+                    if (registry.byId("selectFilter").get("value") !== "All")
+                        var statusFilter = this.config.statusField + " = '" + registry.byId("selectFilter").get("value") + "'";
                 }
                 if (statusFilter) {
                     if (this.filterVisit)
@@ -259,6 +305,9 @@ define([
                 }
                 if (this.visitPopupFields.length > 0)
                     query.outFields = this.visitPopupFields;
+                query.outFields.push(this.visitLayer.objectIdField);
+                
+                
                 query.orderByFields = [this.config.orderField];
                 query.returnGeometry = true;
                 query.outSpatialReference = new SpatialReference(this.map.spatialReference);
@@ -269,6 +318,8 @@ define([
                         this.index += result.features.length;
                         for (var a in result.features) {
                             this.features.push(result.features[a]);
+                            if(!this.features[this.features.length - 1].geometry.spatialReference)
+                                this.features[this.features.length - 1].geometry.spatialReference = this.map.spatialReference;
                         }
                         this.queryFeatures();
                     } else {
@@ -285,22 +336,29 @@ define([
             for (var a in bookmarks) {
                 this.features[a] = {
                     geometry: (new Extent(bookmarks[a].extent)).getCenter(),
-                    attributes: {name:bookmarks[a].name}
+                    attributes: {name: bookmarks[a].name}
 
                 };
             }
             this.selectFirstRecord();
         },
         selectFirstRecord: function () {
-            this.recordIndex = 0;
-            this.zoomToRecord("next");
+            this.recordIndex = -1;
             registry.byId("prevBtn").set("disabled", true);
-            if (this.features.length > 0)
+            if (this.features.length > 0) {
                 registry.byId("nextBtn").set("disabled", false);
-            else
+                document.getElementById("nextBtn").click();
+                html.set(document.getElementById("noOfRecords")," " + this.features.length);
+                registry.byId("recordIndex").set("constraints", {min: 1,max: this.features.length,place: 0});
+                domStyle.set("recordDisplay","display","block");
+            }else {
+                domStyle.set("recordDisplay","display","none");
+                html.set(document.getElementById("noOfRecords"),"");
+                registry.byId("recordIndex").set("constraints", {min: 0,max: 0,place: 0});
                 registry.byId("nextBtn").set("disabled", true);
+            }
         },
-        zoomToRecord: function (mode) {
+        zoomToRecord: function () {
             if (this.recordIndex >= 0 && this.recordIndex < this.features.length) {
                 if (this.recordIndex === 0) {
                     registry.byId("prevBtn").set("disabled", true);
@@ -316,10 +374,11 @@ define([
                     var point = ((this.features[this.recordIndex].geometry).getExtent()).getCenter();
 
                 }
+                
                 registry.byId("visitContentDiv").set("content", "");
                 registry.byId("imageAttributesContent").set("content", "");
-                if(domStyle.get("bookmarkName","display") === "block"){
-                    document.getElementById("bookmarkName").innerHTML = "<span class='titleLabel'>"+this.i18n.title+":  </span><span>"+this.features[this.recordIndex].attributes.name+"<span>";
+                if (domStyle.get("bookmarkName", "display") === "block") {
+                    document.getElementById("bookmarkName").innerHTML = "<span class='titleLabel'>" + this.i18n.title + ":  </span><span>" + this.features[this.recordIndex].attributes.name + "<span>";
                 }
                 if (this.features[this.recordIndex].noteAdded)
                     this.hideTemplateDiv = true;
@@ -327,16 +386,16 @@ define([
                     this.hideTemplateDiv = false;
                 if (this.visitLayer) {
                     this.selectFeature().then(lang.hitch(this, function () {
-                        this.setMapExtent(point, mode);
+                        this.setMapExtent(point);
                     }));
                 } else {
                     this.currentVisitFeature = {"geometry": point, attributes: this.notesAttributes};
-                    this.setMapExtent(point, mode);
+                    this.setMapExtent(point);
                 }
             }
 
         },
-        setMapExtent: function (point, mode) {
+        setMapExtent: function (point) {
             this._destroyEditor();
             this.map.centerAt(point).then(lang.hitch(this, function () {
                 this.map.setScale(parseInt(this.config.zoomLevel)).then(lang.hitch(this, function () {
@@ -358,7 +417,7 @@ define([
 
                     }
 
-                    if (this.recordIndex >= 0 && this.recordIndex < this.features.length - 1 && mode !== "prev") {
+                    if (this.recordIndex >= 0 && this.recordIndex < this.features.length - 1 /*&& mode !== "prev"*/) {
                         this.makeImageRequest(this.recordIndex + 1);
                     }
                 }));
@@ -413,8 +472,19 @@ define([
                         });
                     });
                 }
+                this.identifyRequest(point);
             }
         },
+       identifyRequest: function(point){
+           var identify = new IdentifyTask(this.imageryLayer.url);
+          var parameters = new ImageServiceIdentifyParameters();
+          parameters.geometry =point;
+          parameters.mosaicRule = this.imageryLayer.mosaicRule;
+          parameters.renderingRule = this.imageryLayer.renderingRule;
+          parameters.returnGeometry = false;
+          parameters.returnCatalogItems = true;
+          identify.execute(parameters);
+       },
         makeIdentifyRequest: function (geometry) {
             if (this.imageryLayer.visible) {
                 this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
@@ -446,8 +516,9 @@ define([
                 this.currentVisitFeature = feature;
                 var content = feature.getContent();
                 registry.byId("visitContentDiv").set("content", content);
-                if (this.config.statusField)
+                if (this.config.statusField && registry.byId("setStatus")){
                     registry.byId("setStatus").set("value", this.visitAttributes[this.config.statusField]);
+                }
             }
         },
         fillImageryAttributes: function (feature) {
@@ -467,7 +538,7 @@ define([
                                 options.push({"label": codedValues[b].name, value: codedValues[b].code});
                             }
                         } else {
-                            var options = [{"label": "Follow up", value: "-1"}, {"label": "Okay", value: "1"}, {"label": "No Status", value: "0"}];
+                            var options = [ {"label": this.i18n.noStat, value: "0"},{"label": this.i18n.follow, value: "-1"}, {"label": this.i18n.okay, value: "1"}];
                         }
                         break;
 
@@ -485,6 +556,9 @@ define([
                 this.visitLayer.refresh();
                 this.selectFeature();
             }));
+            if(!this.notesLayer) {
+                document.getElementById("nextBtn").click();
+            }
         },
         addToNotesLayer: function () {
             var attributes = {};
@@ -530,10 +604,9 @@ define([
             if (this.config.imageFieldType === "esriFieldTypeDate") {
                 query.where = "(Category = 1)";
                 var date = new Date(this.features[recordIndex].attributes[this.config.visitField]);
-                
-                var d = new Date(date.getFullYear(),date.getMonth(),date.getDate(),0,0,0);
-                var d2 = new Date(date.getFullYear(),date.getMonth(),date.getDate(),23,59,59);
-                
+                var d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+                var d2 = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+
                 query.timeExtent = new TimeExtent(d, d2);
             } else if (this.config.imageFieldType === "esriFieldTypeString") {
                 query.where = "(Category = 1) AND (" + this.config.imageField + " = '" + this.features[recordIndex].attributes[this.config.visitField] + "')";
@@ -576,19 +649,16 @@ define([
                     domStyle.set("notesEditor", "display", "block");
                 registry.byId("editToggle").set("disabled", false);
                 if (layer && layer.isEditable()) {
+                    if(layer.arcgisProps.title){
+                        layer.name = layer.arcgisProps.title;
+                    }
                     this.templateLayers.push(layer);
-                    layer.on("edits-complete", lang.hitch(this, function () {
+                    layer.on("edits-complete", lang.hitch(this, function (response) {
+                    if (this.config.notesMode === "one") {
+                    this.features[this.recordIndex].noteAdded = response.adds[0].objectId;
+                    }
                         layer.refresh();
                     }));
-                    this.notesAttributes = {};
-
-                    for (var a in layer.fields) {
-
-                        if (layer.fields[a].editable) {
-                            this.notesAttributes[layer.fields[a].name] = layer.fields[a].defaultValue;
-                        }
-                    }
-
                     if (layer && layer.infoTemplate && layer.infoTemplate.info && layer.infoTemplate.info.fieldInfos) {
                         //only display visible fields
                         var fields = layer.infoTemplate.info.fieldInfos;
@@ -625,15 +695,12 @@ define([
                     return;
                 }
                 var layerRenderer = layerInfo.featureLayer.renderer;
-                //var layerRendererJson = layerRenderer.toJson();
                 var serviceDefJson = Json.parse(layerInfo.featureLayer._json);
                 var serviceRendererJson = serviceDefJson.drawingInfo.renderer;
-                // if (!jimuUtils.isEqual(layerRendererJson, serviceRendererJson)) {
                 layerInfo._layerRenderer = layerRenderer;
                 this._layerInfoParamArrayUseForRervertRenderer.push(layerInfo);
                 layerInfo.featureLayer.setRenderer(rendererJsonUtils.fromJson(serviceRendererJson));
                 layerInfo.featureLayer.redraw();
-                //  }
             }, this);
         },
         createEditor: function () {
@@ -703,8 +770,8 @@ define([
                     this.fillDefaultValues();
             }));
             this.editor.templatePicker.update(true);
-            this.editor.attributeInspector.on("delete", lang.hitch(this, function () {
-                if (this.config.notesMode === "one") {
+            this.editor.attributeInspector.on("delete", lang.hitch(this, function (evt) {
+                if (this.config.notesMode === "one" && this.features[this.recordIndex].noteAdded && this.features[this.recordIndex].noteAdded === evt.feature.attributes[this.notesLayer.objectIdField]) {
                     this.hideTemplateDiv = false;
                     this.features[this.recordIndex].noteAdded = false;
                     setTimeout(lang.hitch(this, function () {
@@ -717,7 +784,8 @@ define([
              saveButton.on("click", lang.hitch(this,function() {
              console.log(this.editor.attributeInspector);
              }));*/
-            registry.byId("attributeInspectorDiv").set("content", this.editor.attributeInspector.domNode);
+            if (this.notesAttributes !== {})
+                registry.byId("attributeInspectorDiv").set("content", this.editor.attributeInspector.domNode);
 
         },
         fillDefaultValues: function (value) {
@@ -751,7 +819,7 @@ define([
             }));
         },
         errorNotification: function (error) {
-            
+
         },
         _destroyEditor: function () {
             if (this.editor) {
@@ -769,6 +837,20 @@ define([
             }, this);
             this._layerInfoParamArrayUseForRervertRenderer = [];
         },
+        createCheckBox: function (value, label) {
+
+                    domConstruct.place("<div style='margin: 0.6em;'><div id='" + value + "'></div><label for='" + value + "'>" + label + "</label></div>", "layerAttributesContent", "last");
+                    var layer = this.map.getLayer(this[value].id);
+                    new CheckBox({
+                        checked: layer.visible,
+                        onChange: lang.hitch(this, function (flag) {
+                            if (flag)
+                                this.map.getLayer(this[value].id).show();
+                            else
+                                this.map.getLayer(this[value].id).hide();
+                        })
+                    }, value).startup();
+                },
         showLoading: function () {
             domStyle.set("loadingContentPane", "display", "block");
         },

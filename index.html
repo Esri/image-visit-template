@@ -33,14 +33,15 @@
         <div id="dockContainer" style='display: block;'><div id='widgetsContainer'>
                 <button role="button" aria-pressed="false" id='aboutContainer'  class="toolContainers"><img alt="" src='images/about.png' class='iconNode'/></button>
                 <button role="button" aria-pressed="false" id='visitContainer'  class="toolContainers"><span class="iconText"></span></button>
+                <!--<button role="button" aria-pressed="false" id='layerContainer'  class="toolContainers"><img alt="" src='images/operationalLayer.png' class='iconNode'/></button>-->
                 <button role="button" aria-pressed="false" id='measurementContainer'  class="toolContainers"><img alt="" src='images/measurement.png' class='iconNode'/></button>
                 <button role="button" aria-pressed="false" id='basemapContainer'  class="toolContainers"><img alt="" src='images/basemap.png' class='iconNode'/></button>
-        </div></div>
+            </div></div>
         <div class="mainContainer">
-        <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="resize: function(){}, focus: function(){}" id="toolsContentContainer" class="toolsContentContainer"></div>
-        <div id="mapDiv" dir="ltr"></div>
+            <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="resize: function(){}, focus: function(){}" id="toolsContentContainer" class="toolsContentContainer"></div>
+            <div id="mapDiv" dir="ltr"></div>
         </div>
-        <div role="button" tabindex="0" aria-label="Layer Toggle" id="layerContainer"><div id="layerIconNode" class="layerIcon"><img alt="" src='images/operationalLayer.png' height="20" width='20' style='margin: 5px;'/></div></div>
+        <!-- <div role="button" tabindex="0" aria-label="Layer Toggle" id="layerContainer"><div id="layerIconNode" class="layerIcon"><img alt="" src='images/operationalLayer.png' height="20" width='20' style='margin: 5px;'/></div></div>-->
         <script type="text/javascript">
             var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
             var dojoConfig = {
@@ -58,9 +59,9 @@
                     }]
             };
             // Have to handle a locale parameter before dojo is loaded
-          if (location.search.match(/locale=([\w\-]+)/)) {
+            if (location.search.match(/locale=([\w\-]+)/)) {
                 dojoConfig.locale = RegExp.$1;
-          }
+            }
 
         </script>
         <script type="text/javascript" src="https://js.arcgis.com/3.24"></script>
