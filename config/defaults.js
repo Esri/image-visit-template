@@ -37,6 +37,7 @@ define({
     "widgetTitleColor": "#008299",
     "toolsIconColor": "#008299",
     "toolOnByDefault": "none",
+     "visitStatusFilter": "All",
     "aboutFlag": false,
     "aboutText": "",
     "basemapFlag": true,
