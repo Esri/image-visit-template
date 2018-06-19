@@ -7,21 +7,21 @@
                 "type":"webmap",
                         "conditions":["imagelayer"]
                 },
-                {
-                "placeHolder":"Enter the title",
-                        "label":"Title:",
-                        "fieldName":"title",
-                        "type":"string",
-                        "tooltip":"Provide App Name"
-                },
-                {
-                "placeHolder":"Description",
-                        "label":"Description:",
-                        "fieldName":"description",
-                        "type":"string",
-                        "tooltip":"Provide exciting info for the App title tooltip.",
-                        "stringFieldOption":"textarea"
-                }
+               {
+        "placeHolder":"Enter the title",
+                "label":"Title for ArcGIS Online item:",
+                "fieldName":"title",
+                "type":"string",
+                "tooltip":"Provide App Name"
+        },
+        {
+        "placeHolder":"Description",
+                "label":"Description for ArcGIS Online item:",
+                "fieldName":"description",
+                "type":"string",
+                "tooltip":"Provide exciting info for the App title tooltip.",
+                "stringFieldOption":"textarea"
+        }
                 ]
                 },
         {
@@ -74,7 +74,7 @@
                 {
                 "type":"options",
                         "fieldName":"toolOnByDefault",
-                        "label":"Specify active tool at app startup",
+                        "label":"Pick a tool to open automatically when the app loads",
                         "tooltip":"",
                         "options":[
                         {
@@ -92,14 +92,10 @@
                         ]
                 },
                 {
-                "type":"paragraph",
-                        "value":"<span style='text-align: justify;font-family: verdana;'>Use the About tool to give your app context. Use this widget to explain to the user what the purpose of the app is and how to get started.</span>"
-                },
-                {
                 "type": "conditional",
                         "condition": false,
                         "fieldName": "aboutFlag",
-                        "label": "Enable about tool",
+                        "label": "Add the About tool to tell users what your app does",
                         "items": [
                         {
                         "type": "string",
@@ -112,7 +108,7 @@
                 },
                 {
                 "type":"boolean",
-                        "label":"Enable Basemap Gallery",
+                        "label":"Add the basemap Gallery to let users choose a basemap",
                         "fieldName":"basemapFlag",
                         "tooltip":"Basemap Selector"
                 },
@@ -120,8 +116,8 @@
                 "type":"conditional",
                         "condition":false,
                         "fieldName":"scalebarFlag",
-                        "label":"Enable Scalebar",
-                        "tooltip":"Display Scalebar",
+                        "label":"Add a scalebar to your map",
+                        "tooltip":"",
                         "items":[
                         {
                         "type":"options",
@@ -195,7 +191,7 @@
                 },
                 {
                 "type":"boolean",
-                        "label":"Enable Layer Toggle",
+                        "label":"Add a Layer Toggle tool so users can turn imagery, notes, and visit layers on and off",
                         "fieldName":"layerFlag",
                         "tooltip":"Layer Toggle"
                 },
@@ -210,8 +206,8 @@
                 {
                 "type":"layerAndFieldSelector",
                         "fieldName":"imageLayer",
-                        "label": "Imagery Layer",
-                        "tooltip":"Select an image layer",
+                        "label": "Choose your app's Imagery layer:",
+                        "tooltip":"Choose the imagery layer users will see.",
                         "layerOptions":{
                         "supportedTypes":[
                                 "ImageServiceLayer"
@@ -224,19 +220,142 @@
                 {
                 "type":"scaleList",
                         "fieldName":"zoomLevel",
-                        "label":"Choose Zoom Level",
-                        "tooltip":""
+                        "label":"Choose the default zoom level to view imagery at each predetermined location:",
+                        "tooltip":"Choose the default zoom level to view imagery at each predetermined location"
                 },
                 {
-                "type":"paragraph",
-                        "value":"<p style='text-align:justify;font-family: verdana;'>The Image Measurement tool allows you to perform measurements on image services with mensuration capability. Mensuration applies geometric rules to find the height, area, or location of a feature.</p>"
+                "type":"layerAndFieldSelector",
+                        "fieldName":"visitLayer",
+                        "label":"Choose a Visit layer. This is a hosted feature layer where each feature corresponds to a predetermined location your app will 'visit'.",
+                        "tooltip":"",
+                        "fields":[
+                        {
+                        "multipleSelection":false,
+                                "fieldName":"visitOrderField",
+                                "label":"(Optional) Select an Order field to control the order in which your app visits your predetermined locations:",
+                                "tooltip":"",
+                                "supportedTypes":[
+                                        "esriFieldTypeSmallInteger",
+                                        "esriFieldTypeInteger",
+                                        "esriFieldTypeSingle",
+                                        "esriFieldTypeDouble",
+                                        "esriFieldTypeOID"
+                                ]
+                        },
+                        {
+                        "multipleSelection":false,
+                                "fieldName":"statusField",
+                                "label":"(Optional) Select a Status field for users to record the status of predetermined locations(use your own schema, or rely on the default):",
+                                "tooltip":"",
+                                "supportedTypes":[
+                                        "esriFieldTypeSmallInteger",
+                                        "esriFieldTypeInteger",
+                                        "esriFieldTypeSingle",
+                                        "esriFieldTypeDouble",
+                                        "esriFieldTypeString",
+                                        "esriFieldTypeDate",
+                                        "esriFieldTypeOID",
+                                        "esriFieldTypeGeometry",
+                                        "esriFieldTypeBlob",
+                                        "esriFieldTypeRaster",
+                                        "esriFieldTypeGUID",
+                                        "esriFieldTypeGlobalID",
+                                        "esriFieldTypeXML"
+                                ]
+                        }
+                        ],
+                        "layerOptions":{
+                        "supportedTypes":[
+                                "FeatureLayer"
+                        ]
+                        }
+                },
+                {
+                "type": "string",
+                        "fieldName":"visitStatusFilter",
+                        "label":"(Optional) Choose a default status value to filter the initial Visit locations:",
+                        "stringFieldOption": "textbox",
+                        "placeHolder": ""
+                },
+                {
+                "type":"conditional",
+                        "condition": false,
+                        "fieldName":"imageFilterFlag",
+                        "label":"Fill the imagery in your app based on a Visit layer field",
+                        "tooltip": "",
+                        "items":[
+                        {
+                        "type":"string",
+                                "fieldName": "visitFilterField",
+                                "label":"Display imagery only if",
+                                "tooltip": "",
+                                "stringFieldOption": "textbox",
+                                "placeHolder": "Enter visit layer field"
+                        },
+                        {
+                        "type": "string",
+                                "fieldName":"imageFilterField",
+                                "label":"matches",
+                                "stringFieldOption": "textbox",
+                                "placeHolder": "Enter imagery layer field"
+                        }
+                        ]
+                },
+                {
+                    
+                        "type":"paragraph",
+                                "value":"<p style='text-align:justify;font-family:verdana;'>Note: If you don't choose a Visit layer, the app will navigate by proceeding through your web map's bookmarks.</p>"
+                        },
+                {
+                "type":"conditional",
+                        "condition": false,
+                        "fieldName":"userNotesFlag",
+                        "label":"Choose a User Notes layer. This is a hosted feature layer users can use to annotate imagery or record attributes.",
+                        "items":[
+                        {
+                        "type":"layerAndFieldSelector",
+                                "fieldName":"notesLayer",
+                                "label":"User Notes layer:",
+                                "tooltip":"",
+                                "fields":[
+                                ],
+                                "layerOptions":{
+                                "supportedTypes":[
+                                        "FeatureLayer"
+                                ]
+                                }
+                        },
+                        {
+                        "type": "options",
+                                "fieldName": "notesMode",
+                                "tooltip": "",
+                                "label": "Choose how users will record notes:",
+                                "options": [{
+                                "label": "User adds many features",
+                                        "value": "many"
+                                },
+                                {
+                                "label": "User adds one feature",
+                                        "value": "one"
+                                },
+                            {
+                                "label": "Copy visit feature",
+                                        "value": "copy"
+                                }]
+                        },
+                        {
+                        "type":"paragraph",
+                                "value":"<p style='text-align:justify;font-family:verdana;'>Note: For each predetermined location, you can allow the user to<br />(1) add/edit unlimited Notes features,<br/>(2) add/edit only one Notes feature, or<br/>(3) edit a pre-generated copy of the Visit layer feature for that location.</p>"
+                        }
+
+                        ]
                 },
                 {
                 "type":"conditional",
                         "condition":false,
                         "fieldName":"measurementFlag",
-                        "label":"Image Measurement",
-                        "tooltip": "Enable Image Measurement",
+                        "label":"Add the Image Measurement tool",
+                        "tooltip": "",
                         "items":[
                         {
                         "type":"paragraph",
@@ -363,154 +482,30 @@
                                 ]
                         }
                         ]
-                },
-                {
-                "type": "paragraph",
-                        "value": "<span style='font-weight: bold; font-size: 14px;'>Image Visit</span>"
-                },
-                {
-                "type":"layerAndFieldSelector",
-                        "fieldName":"visitLayer",
-                        "label":"Visit Layer",
-                        "tooltip":"Select Visit Layer",
-                        "fields":[
-                        {
-                        "multipleSelection":false,
-                                "fieldName":"visitOrderField",
-                                "label":"Visit Order (Optional)",
-                                "tooltip":"Select a visit order field",
-                                "supportedTypes":[
-                                        "esriFieldTypeSmallInteger",
-                                        "esriFieldTypeInteger",
-                                        "esriFieldTypeSingle",
-                                        "esriFieldTypeDouble",
-                                        "esriFieldTypeOID"
-                                ]
-                        },
-                        {
-                        "multipleSelection":false,
-                                "fieldName":"statusField",
-                                "label":"Status (Optional)",
-                                "tooltip":"Select a status field",
-                                "supportedTypes":[
-                                        "esriFieldTypeSmallInteger",
-                                        "esriFieldTypeInteger",
-                                        "esriFieldTypeSingle",
-                                        "esriFieldTypeDouble",
-                                        "esriFieldTypeString",
-                                        "esriFieldTypeDate",
-                                        "esriFieldTypeOID",
-                                        "esriFieldTypeGeometry",
-                                        "esriFieldTypeBlob",
-                                        "esriFieldTypeRaster",
-                                        "esriFieldTypeGUID",
-                                        "esriFieldTypeGlobalID",
-                                        "esriFieldTypeXML"
-                                ]
-                        }
-                        ],
-                        "layerOptions":{
-                        "supportedTypes":[
-                                "FeatureLayer"
-                        ]
-                        }
-                },
-                {
-                "type": "string",
-                        "fieldName":"visitStatusFilter",
-                        "label":"Status Filter Value:",
-                        "stringFieldOption": "textbox",
-                        "placeHolder": "Enter filter value for above selected Status field"
-                },
-                {
-                "type":"conditional",
-                        "condition": false,
-                        "fieldName":"imageFilterFlag",
-                        "label":"Image Filter",
-                        "tooltip": "Enable Image Filter",
-                        "items":[
-                        {
-                        "type":"string",
-                                "fieldName": "visitFilterField",
-                                "label":"Display imagery only if",
-                                "tooltip": "",
-                                "stringFieldOption": "textbox",
-                                "placeHolder": "Enter visit layer field"
-                        },
-                        {
-                        "type": "string",
-                                "fieldName":"imageFilterField",
-                                "label":"matches",
-                                "stringFieldOption": "textbox",
-                                "placeHolder": "Enter imagery layer field"
-                        }
-                        ]
-                },
-                {
-                "type":"conditional",
-                        "condition": false,
-                        "fieldName":"userNotesFlag",
-                        "label":"User Notes",
-                        "items":[
-                        {
-                        "type":"layerAndFieldSelector",
-                                "fieldName":"notesLayer",
-                                "label":"Notes Layer",
-                                "tooltip":"Select editable Notes Layer",
-                                "fields":[
-                                ],
-                                "layerOptions":{
-                                "supportedTypes":[
-                                        "FeatureLayer"
-                                ]
-                                }
-                        },
-                        {
-                        "type": "options",
-                                "fieldName": "notesMode",
-                                "tooltip": "Select Notes Mode",
-                                "label": "Notes Mode:",
-                                "options": [{
-                                "label": "Copy visit feature",
-                                        "value": "copy"
-                                }, {
-                                "label": "User adds one feature",
-                                        "value": "one"
-                                }, {
-                                "label": "User adds many features",
-                                        "value": "many"
-                                }]
-                        }
-
-                        ]
                 }
 
                 ]
                 },
         {
-        "category": "Search",
-                "fields": [
+"category": "Search",
+        "fields": [
+        {
+        "type":"conditional",
+                "condition":false,
+                "fieldName":"search",
+                "label":"Add the Search tool so users can search for a location or data in the app",
+                "items":[
                 {
-                "type":"paragraph",
-                        "value":"<span style='text-align: justify;font-family: verdana;'>Enable search to allow users to find a location or data in the map. Configure the search settings to refine the experience in your app by setting the default search resource, placeholder text, etc.</span>"
-                },
-                {
-                "type":"conditional",
-                        "condition":false,
-                        "fieldName":"search",
-                        "label":"Enable search tool",
-                        "items":[
-                        {
-                        "type":"search",
-                                "fieldName":"searchConfig",
-                                "label":"Configure search tool"
-                        }
-                        ]
+                "type":"search",
+                        "fieldName":"searchConfig",
+                        "label":"Configure search tool"
                 }
                 ]
+        }
+        ]
 
 
-                }
+}
 ],
         "values":{
         "title": "Image Visit",
