@@ -312,6 +312,7 @@ define([
                 query.returnGeometry = true;
                 query.outSpatialReference = new SpatialReference(this.map.spatialReference);
                 query.start = this.index;
+                query.num = this.noOfRecords;
                 var queryTask = new QueryTask(this.visitLayer.url);
                 queryTask.execute(query, lang.hitch(this, function (result) {
                     if (result && result.features && result.features.length > 0) {
