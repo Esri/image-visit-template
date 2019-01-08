@@ -67,9 +67,10 @@ define([
                 document.getElementById("titleContainer").style.backgroundColor = this.config.background;
                 document.getElementById("dockContainer").style.backgroundColor = this.config.background;
                 document.getElementById("titleText").style.color = this.config.color;
-
+                
                 this.createCSSRules();
                 if (window.document.dir === "rtl") {
+                    
                     domStyle.set("toolsContentContainer", "float", "right");
                 }
                 var toolContainers = document.getElementsByClassName("toolContainers");
@@ -297,8 +298,8 @@ define([
             document.getElementById("dockContainer").style.top = top;
             document.getElementsByClassName("mainContainer")[0].style.marginTop = top;
             document.getElementsByClassName("mainContainer")[0].style.height = "calc(100% - " + top + ")";
-
-
+            document.getElementById("borderContainer").style.width = (window.innerWidth - parseInt(left.split("px")[0])) + "px";
+            registry.byId("borderContainer").resize();
             if (domStyle.get("dockContainer", "display") === "block") {
                 if (window.document.dir === "ltr")
                     document.getElementsByClassName("mainContainer")[0].style.marginLeft = left;
@@ -496,9 +497,18 @@ define([
         },
         setupVisit: function () {
             if (this.map.infoWindow) {
-                this.map.infoWindow.set("popupWindow", false);
+                //this.map.infoWindow.set("popupWindow", true);
                 document.getElementsByClassName("iconText")[0].innerHTML = this.config.i18n.visit.title;
                 this.setupToolContent("visitContainer", 1, visitHtml, this.config.i18n.visit.title, "visitNode", "visit");
+                if(!this.config.imageLayer.id) {
+                    var layers = this.config.itemInfo.itemData.operationalLayers;
+                for (var a = layers.length - 1; a >= 0; a--) {
+                    if ((layers[a].layerType && layers[a].layerType === "ArcGISTiledImageServiceLayer") || ((layers[a].layerObject && layers[a].layerObject.serviceDataType && layers[a].layerObject.serviceDataType.substr(0, 16) === "esriImageService") || (layers[a].layerType && layers[a].layerType === "ArcGISImageServiceLayer"))) {
+                        this.config.imageLayer = {id: layers[a].id};
+                        break;
+                    }
+                }
+                }
                 var temp = {
                     imageLayer: this.config.imageLayer,
                     visitLayer: this.config.visitLayer,
@@ -506,12 +516,16 @@ define([
                     imageField: this.config.imageFilterField,
                     visitField: this.config.visitFilterField,
                     notesFlag: this.config.userNotesFlag,
-                    zoomLevel: this.config.zoomLevel,
+                    zoomLevel: this.config.customZoomLevel || this.config.zoomLevel,
                     notesMode: this.config.notesMode,
                     imageFilter: this.config.imageFilterFlag,
                     visitStatusFilter: this.config.visitStatusFilter,
-                    layerToggle: this.config.layerFlag        
+                    layerToggle: this.config.layerFlag,
+                    circleProperties: {enable: this.config.distanceCircleFlag,type:this.config.graphicType, color: this.config.circleColor, radius: this.config.radius, width: this.config.thickness}
+                    
                 };
+                
+                    
                 this.visitFunction = new Visit({map: this.map, config: temp, i18n: this.config.i18n.visit, itemInfo: this.config.itemInfo.itemData, main: this});
                 this.addClickEvent("visitContainer", this.visitFunction, "visitNode");
                 if (window.document.dir === "rtl") {
@@ -519,6 +533,7 @@ define([
                     list[0].style.float = "left";
                     list[1].style.float = "left";
                     list[2].style.float = "left";
+                    list[3].style.float = "left";
                 }
             }
         },
@@ -556,6 +571,7 @@ define([
                 html = this.findAndReplaceStrings(html, key);
             var node = domConstruct.create("div", {innerHTML: html, id: nodeName, style: "display:none;"});
             parser.parse(node);
+            domStyle.set(node,"min-width","13vw");
             domConstruct.place(node, registry.byId("toolsContentContainer").containerNode);
         },
         addClickEvent: function (container, toolObject, node) {
@@ -620,6 +636,7 @@ define([
 
             return html;
         },
+        
         showLoading: function () {
             domStyle.set("loadingMap", "display", "block");
         },

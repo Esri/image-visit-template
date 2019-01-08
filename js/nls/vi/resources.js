@@ -16,7 +16,11 @@
  */
 define({
   "map": {
-    "error": "Không thể tạo bản đồ"
+    "error": "Không thể tạo bản đồ",
+    "licenseError": {
+      "message": "Tài khoản của bạn không được cấp phép để sử dụng ứng dụng có thể cấu hình mà không được công khai. Vui lòng yêu cầu quản trị viên của tổ chức bạn gán cho bạn loại người dùng nào có bao gồm các ứng dụng thiết yếu hoặc có giấy phép sử dụng các ứng dụng thiết yếu bổ trợ.",
+      "title": "Không được cấp phép"
+    }
   },
   "nav": {
     "close": "Đóng"
@@ -24,96 +28,45 @@ define({
   "basemap": {
     "title": "Bộ sưu tập bản đồ nền"
   },
-  "operationalLayers": {
-    "title": "Các lớp hoạt động",
-    "error": "Không có lớp hoạt động nào trong bản đồ."
-  },
-  "layerSelector": {
-    "active": "Lớp hoạt động",
-    "comparison": "Lớp so sánh",
-    "other": "Khác",
-    "result": "Kết quả",
-    "title": "Trình lựa chọn lớp",
-    "resultSave": "Thêm lớp Kết quả trong danh sách lớp so sánh",
-    "copy": "Sao chép lớp hoạt động vào lớp so sánh.",
-    "swap": "Hoán đổi lớp hoạt động và lớp so sánh."
-  },
-  "renderer": {
-    "title": "Trình kết xuất",
-    "stretch": "Các thông số kéo giãn",
-    "stretchType": "Loại Kéo giãn",
-    "dra": "DRA",
-    "draText": "Chức năng Điều chỉnh Phạm vi Động được cải tiến dựa trên trình xem hiện tại",
-    "gamma": "Gamma",
-    "apply": "Áp dụng",
-    "top": "Loại trừ đỉnh",
-    "bottom": "Loại trừ đáy",
-    "topText": " Loại trừ tỷ lệ phần trăm đỉnh x của biểu đồ tần số",
-    "bottomText": " Loại trừ tỷ lệ phần trăm đáy x của biểu đồ tần số",
-    "stdDev": "# của độ lệch chuẩn",
-    "layer": "Lớp hiện tại",
-    "error": "Không có Lớp Hình ảnh hiển thị nào trong bản đồ."
-  },
-  "imageSelector": {
-    "title": "Trình lựa chọn hình ảnh",
-    "enable": "Bật Trình lựa chọn Hình ảnh",
-    "secondary": "Thiết lập lớp hoạt động thành Lớp So sánh.",
-    "dropDown": "Hiển thị hình ảnh trong danh sách xổ xuống.",
-    "refresh": "Làm mới lại câu truy vấn dựa trên phạm vi hiện tại.",
-    "show": "Hiển thị",
-    "age": "Tuổi",
-    "zoom": "Phóng to để chọn hình ảnh.",
-    "error": "Không có Lớp Hình ảnh hiển thị nào trong bản đồ.",
-    "error1": "Trường không được chỉ định.",
-    "error2": "Không có trường OBJECTID.",
-    "error3": "Không có trường Thể loại.",
-    "error4": "Không thể thực hiện hoạt động cho lớp dữ liệu.",
-    "error5": "Các dịch vụ trước phiên bản 10.2.1 sẽ không được hỗ trợ.",
-    "error6": "Không có scene nào trong phạm vi hiện tại.",
-    "error7": "Số điểm được chọn vượt quá 20 điểm. Chỉ 20 điểm đầu tiên mới được hiển thị. Nhấn OK để không bị cảnh bảo lại.",
-    "slider": "Hiển thị hình ảnh trên thanh trượt."
-  },
-  "changeDetection": {
-    "title": "Phát hiện Thay đổi",
-    "mode": "Chế độ",
-    "method": "Phương pháp",
-    "positive": "Chênh lệch dương",
-    "negative": "Chênh lệch âm",
-    "threshold": "Ngưỡng",
-    "difference": "Chênh lệch",
-    "apply": "Áp dụng",
-    "error": "Chức năng Phát hiện Thay đổi hoạt động với hai hình ảnh từ các ngày khác nhau từ cùng một dịch vụ.<br />Trước tiên sử dụng Trình lựa chọn Hình ảnh để xác định ra một hình ảnh,<br />sau đó nhấp vào nút <img src='images/down.png' height='14'/> và chọn hình ảnh thứ hai.<br />Trở lại bảng điều khiển này để tiếp tục với việc phát hiện thay đổi."
-  },
-  "editor": {
-    "title": "Trình biên tập",
-    "error": "Không có Lớp Chỉnh sửa nào được chọn.",
-    "error1": "Truy cập bị từ chối. Không thể chỉnh sửa các lớp."
+  "visit": {
+    "title": "Visit",
+    "visit": "Thuộc tính Visit",
+    "image": "Thuộc tính Hình ảnh",
+    "addText": "Chọn một biểu tượng và bấm vào bản đồ.",
+    "next": "Tiếp theo",
+    "prev": "Trước",
+    "error": "Truy cập bị từ chối. Không thể chỉnh sửa lớp.",
+    "edit": "Chỉnh sửa Ghi chú",
+    "save": "Lưu",
+    "filter": "Lọc theo trạng thái visit",
+    "all": "Tất cả",
+    "record": "Bản ghi",
+    "of": "của",
+    "error1": "Vui lòng nhập giá trị số hợp lệ.",
+    "layer": "Chuyển đổi Lớp",
+    "imageLayer": "Hình ảnh",
+    "visitLayer": "Visit",
+    "notesLayer": "Lưu ý",
+    "layerError": "Không có lớp nào xuất hiện trong bản đồ.",
+    "follow": "Theo dõi",
+    "okay": "OK",
+    "noStat": "Không có trạng thái",
+    "left": "Trái",
+    "up": "Lên",
+    "down": "Xuống",
+    "right": "Phải",
+    "center": "Tâm",
+    "press": "Nhấn",
+    "scan": "Quét Ảnh",
+    "scale": "Đặt lại Tỷ lệ",
+    "view": "Đặt lại Chế độ xem",
+    "search": "Đang tìm kiếm..."
   },
   "measurement": {
     "title": "Đo lường Hình ảnh",
     "error": "Khả năng Đo lường không được hỗ trợ."
   },
-  "export": {
-    "title": "Xuất",
-    "mode": "Chế độ",
-    "titleText": "Tiêu đề",
-    "description": "Mô tả",
-    "tags": "Thẻ",
-    "submit": "Gửi",
-    "pixel": "Kích thước Pixel",
-    "outsr": "Tham chiếu Không gian Đầu ra",
-    "renderer": "Trình kết xuất Hiện tại",
-    "extent": "Xác định Phạm vi",
-    "text": "Nếu Trình kết xuất Hiện tại được đánh dấu chọn, việc kết xuất<br /> sẽ được xuất, nếu không giá trị dữ liệu ban đầu<br/> sẽ được xuất ra.",
-    "error": "Không có lớp hình ảnh hiển thị nào trên bản đồ.",
-    "error1": "Cần có tiêu đề.",
-    "error2": "Cần có (các) Thẻ."
-  },
-  "compare": {
-    "title": "So sánh",
-    "slider": "Thanh trượt Trong suốt",
-    "hSwipe": "Trượt Ngang",
-    "vSwipe": "Trượt dọc",
-    "error": "Không có Lớp Hình ảnh hiển thị nào có sẵn để so sánh."
+  "about": {
+    "title": "Về"
   }
 });

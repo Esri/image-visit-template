@@ -21,7 +21,7 @@ define([
     "dojo/dom-class",
     "dojo/dom", "esri/renderers/jsonUtils", 'dojo/json', "dojo/_base/array",
     "esri/dijit/editing/Editor",
-    "esri/dijit/editing/TemplatePicker", 
+    "esri/dijit/editing/TemplatePicker",
     "dojo/on", "dojo/query",
     "esri/layers/MosaicRule",
     "esri/tasks/query",
@@ -30,9 +30,9 @@ define([
     "dojo/date/locale",
     "dojo/dom-construct",
     "esri/graphic",
-    "dojo/dom-style",
+    "dojo/dom-style", "esri/geometry/Circle", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/geometry/webMercatorUtils",
     "esri/layers/FeatureLayer",
-    "esri/geometry/Polygon", "esri/SpatialReference","esri/tasks/ImageServiceIdentifyParameters","esri/tasks/IdentifyTask",
+    "esri/geometry/Polygon", "esri/SpatialReference", "esri/tasks/ImageServiceIdentifyParameters", "esri/tasks/IdentifyTask",
     "esri/geometry/Point",
     "esri/request", "dijit/Tooltip",
     "dijit/form/Select",
@@ -51,9 +51,9 @@ define([
         TemplatePicker,
         on, query,
         MosaicRule,
-        Query, QueryTask, Extent, locale, domConstruct, Graphic, domStyle,FeatureLayer,Polygon, SpatialReference,ImageServiceIdentifyParameters,IdentifyTask, Point, esriRequest, Tooltip, Select, Button,CheckBox) {
+        Query, QueryTask, Extent, locale, domConstruct, Graphic, domStyle, Circle, SimpleFillSymbol, SimpleLineSymbol, Color, webMercatorUtils, FeatureLayer, Polygon, SpatialReference, ImageServiceIdentifyParameters, IdentifyTask, Point, esriRequest, Tooltip, Select, Button, CheckBox) {
 
-    return declare("application.SingleLayerViewer", [Evented], {
+    return declare("application.Visit", [Evented], {
         constructor: function (parameters) {
             var defaults = {
                 map: null,
@@ -72,44 +72,54 @@ define([
             document.getElementById("visitAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "visit"));
             document.getElementById("imageAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "image"));
             document.getElementById("layerAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "layer"));
+            
             registry.byId("nextBtn").on("click", lang.hitch(this, function () {
                 if (this.recordIndex < this.features.length - 1) {
                     this.recordIndex++;
-                    if(registry.byId("recordIndex").get("value") !== this.recordIndex + 1)
-                    registry.byId("recordIndex").set("value", this.recordIndex + 1);
+                    if (registry.byId("recordIndex").get("value") !== this.recordIndex + 1)
+                        registry.byId("recordIndex").set("value", this.recordIndex + 1);
                     else
-                    this.moveToNewRecord(this.recordIndex + 1);    
+                        this.moveToNewRecord(this.recordIndex + 1);
                 }
             }));
 
             registry.byId("prevBtn").on("click", lang.hitch(this, function () {
                 if (this.recordIndex > 0) {
                     this.recordIndex--;
-                    if(registry.byId("recordIndex").get("value") !== this.recordIndex + 1)
-                    registry.byId("recordIndex").set("value", this.recordIndex + 1);
+                    if (registry.byId("recordIndex").get("value") !== this.recordIndex + 1)
+                        registry.byId("recordIndex").set("value", this.recordIndex + 1);
                     else
-                    this.moveToNewRecord(this.recordIndex + 1);    
+                        this.moveToNewRecord(this.recordIndex + 1);
                 }
             }));
             registry.byId("recordIndex").on("change", lang.hitch(this, this.moveToNewRecord));
+            registry.byId("recordIndex").on("keyup", lang.hitch(this, function(evt) {
+                if(evt.key === "Enter" || evt.keyCode === 13)
+                this.moveToNewRecord(registry.byId("recordIndex").get("value"));
+            }));
             registry.byId("editToggle").on("change", lang.hitch(this, function (value) {
                 if (value) {
                     domStyle.set("notesEditor", "display", "block");
+                    this.map.infoWindow.set("popupWindow", false);
                     this.createEditor();
+                    
                 } else {
                     domStyle.set("notesEditor", "display", "none");
+                    this.map.infoWindow.set("popupWindow", true);
                     this._destroyEditor();
+                    this.map.setMapCursor("default");   
                 }
             }));
 
-            registry.byId("saveVisitBtn").on("click", lang.hitch(this, this.updateVisitLayer));
             this.imageryLayer = this.config.imageLayer.id ? this.map.getLayer(this.config.imageLayer.id) : null;
             this.visitLayer = this.config.visitLayer.id ? this.map.getLayer(this.config.visitLayer.id) : null;
             this.notesLayer = this.config.notesLayer.id ? this.map.getLayer(this.config.notesLayer.id) : null;
-            if(this.config.layerToggle)
-                domStyle.set("layerContainer","display","block");
+            if (this.config.layerToggle)
+                domStyle.set("layerContainer", "display", "block");
+
             if (this.imageryLayer) {
-                 this.createCheckBox("imageryLayer", this.i18n.imageLayer);
+
+                this.createCheckBox("imageryLayer", this.i18n.imageLayer);
                 this.defaultMosaicRule = (this.imageryLayer.mosaicRule || this.imageryLayer.defaultMosaicRule || "");
                 var fieldInfos = this.imageryLayer.infoTemplate && this.imageryLayer.infoTemplate.info && this.imageryLayer.infoTemplate.info.fieldInfos ? this.imageryLayer.infoTemplate.info.fieldInfos : [];
                 for (var a in fieldInfos) {
@@ -124,7 +134,7 @@ define([
             }
 
             if (this.visitLayer) {
-                 this.createCheckBox("visitLayer", this.i18n.visitLayer);
+                this.createCheckBox("visitLayer", this.i18n.visitLayer);
                 for (var c in this.itemInfo.operationalLayers) {
                     if (this.itemInfo.operationalLayers[c].id === this.config.visitLayer.id) {
                         if (this.itemInfo.operationalLayers[c].layerDefinition)
@@ -149,7 +159,7 @@ define([
                     for (var a in options) {
                         registry.byId("selectFilter").addOption({label: options[a].label, value: options[a].value});
                     }
-                    if (this.config.visitStatusFilter && this.config.visitStatusFilter !== registry.byId("selectFilter").get("value")){
+                    if (this.config.visitStatusFilter && this.config.visitStatusFilter !== registry.byId("selectFilter").get("value")) {
                         var queryFlag = true;
                         registry.byId("selectFilter").set("value", this.config.visitStatusFilter);
                     }
@@ -163,7 +173,7 @@ define([
                         var editStatus = true;
                     if (this.config.visitField && fieldInfos[a].fieldName === this.config.visitField && fieldInfos[a].visible)
                         var visitFieldFlag = true;
-                    
+
                 }
                 if (this.visitPopupFields.length > 0) {
                     domStyle.set("visitAttributeContainer", "display", "block");
@@ -174,14 +184,15 @@ define([
                     this.visitPopupFields.push(this.config.visitField);
                 if (this.config.statusField && editStatus && options.length > 0) {
                     new Select({
-                        options: options
+                        options: options,
+                        onChange: lang.hitch(this, this.updateVisitLayer)
                     }, "setStatus").startup();
                     domStyle.set("setStatusField", "display", "block");
                 }
             }
 
             if (this.notesLayer) {
-                 this.createCheckBox("notesLayer", this.i18n.notesLayer);
+                this.createCheckBox("notesLayer", this.i18n.notesLayer);
                 var fieldInfos = this.notesLayer.infoTemplate && this.notesLayer.infoTemplate.info && this.notesLayer.infoTemplate.info.fieldInfos ? this.notesLayer.infoTemplate.info.fieldInfos : [];
                 for (var a in fieldInfos) {
                     if (fieldInfos[a].visible && fieldInfos[a].isEditable) {
@@ -194,6 +205,11 @@ define([
                         }
                     }
 
+                }
+
+                for (var b in this.config.notesLayer.fields) {
+                    if (this.config.notesLayer.fields[b].id === "notesLayerField")
+                        this.recordVisitOBJECTID = this.config.notesLayer.fields[b].fields[0];
                 }
             }
 
@@ -233,14 +249,36 @@ define([
             }));
 
             registry.byId("selectFilter").on("change", lang.hitch(this, this.getFeatures));
-            if(!queryFlag)
-            this.getFeatures();
+            if (!queryFlag)
+                this.getFeatures();
             this.main.resizeTemplate();
+            window.addEventListener("keydown", lang.hitch(this, this.keyPressEvent));
+            
+            if (this.config.circleProperties.enable) {
+                var node = domConstruct.toDom("<span class='graphicInfoContainer'><span style='font-weight:bold;color: " + this.config.circleProperties.color + "'>" + (this.config.circleProperties.type === 'circle' ? "r:" : "s:") + "</span>  " + this.config.circleProperties.radius + "m</span>");
+                domConstruct.place(node, "mapDiv_root");
+            }
+            this.createTooltips();
+            
+             
+                
         },
-        moveToNewRecord: function(value){
-            if(value && value >0 && value <= this.features.length) {
-                    this.recordIndex = value - 1;
-                    this.zoomToRecord();
+        createTooltips: function () {
+            var temp = [{node: document.getElementById("prevBtn"), label: this.i18n.press + " Alt + P", position: ["below", "before", "above", "after"]},
+                {node: document.getElementById("nextBtn"), label: this.i18n.press + " Alt + N", position: ["after", "below", "above", "before"]}
+            ];
+            for (var a in temp) {
+                new Tooltip({
+                    connectId: [temp[a].node],
+                    label: temp[a].label,
+                    position: temp[a].position
+                });
+            }
+        },
+        moveToNewRecord: function (value) {
+            if (value && value > 0 && value <= this.features.length) {
+                this.recordIndex = value - 1;
+                this.zoomToRecord();
             }
         },
         expandMenu: function (id) {
@@ -306,8 +344,8 @@ define([
                 if (this.visitPopupFields.length > 0)
                     query.outFields = this.visitPopupFields;
                 query.outFields.push(this.visitLayer.objectIdField);
-                
-                
+
+
                 query.orderByFields = [this.config.orderField];
                 query.returnGeometry = true;
                 query.outSpatialReference = new SpatialReference(this.map.spatialReference);
@@ -319,7 +357,7 @@ define([
                         this.index += result.features.length;
                         for (var a in result.features) {
                             this.features.push(result.features[a]);
-                            if(!this.features[this.features.length - 1].geometry.spatialReference)
+                            if (!this.features[this.features.length - 1].geometry.spatialReference)
                                 this.features[this.features.length - 1].geometry.spatialReference = this.map.spatialReference;
                         }
                         this.queryFeatures();
@@ -349,13 +387,13 @@ define([
             if (this.features.length > 0) {
                 registry.byId("nextBtn").set("disabled", false);
                 document.getElementById("nextBtn").click();
-                html.set(document.getElementById("noOfRecords")," " + this.features.length);
-                registry.byId("recordIndex").set("constraints", {min: 1,max: this.features.length,place: 0});
-                domStyle.set("recordDisplay","display","block");
-            }else {
-                domStyle.set("recordDisplay","display","none");
-                html.set(document.getElementById("noOfRecords"),"");
-                registry.byId("recordIndex").set("constraints", {min: 0,max: 0,place: 0});
+                html.set(document.getElementById("noOfRecords"), " " + this.features.length);
+                registry.byId("recordIndex").set("constraints", {min: 1, max: this.features.length, place: 0});
+                domStyle.set("recordDisplay", "display", "block");
+            } else {
+                domStyle.set("recordDisplay", "display", "none");
+                html.set(document.getElementById("noOfRecords"), "");
+                registry.byId("recordIndex").set("constraints", {min: 0, max: 0, place: 0});
                 registry.byId("nextBtn").set("disabled", true);
             }
         },
@@ -375,9 +413,12 @@ define([
                     var point = ((this.features[this.recordIndex].geometry).getExtent()).getCenter();
 
                 }
-                
+                this.centerPoint = point;
+                if (this.config.circleProperties.enable) {
+                    this.createAndDisplayCircle(point);
+                }
                 registry.byId("visitContentDiv").set("content", "");
-                registry.byId("imageAttributesContent").set("content", "");
+                registry.byId("imageAttributesContent").set("content", domConstruct.toDom("<div class='searchingImageAttributes'><span style='font-size:inherit;'>"+this.i18n.search+"</span></div>"));
                 if (domStyle.get("bookmarkName", "display") === "block") {
                     document.getElementById("bookmarkName").innerHTML = "<span class='titleLabel'>" + this.i18n.title + ":  </span><span>" + this.features[this.recordIndex].attributes.name + "<span>";
                 }
@@ -406,15 +447,17 @@ define([
                             if (this.imageryLayer) {
                                 this.makeIdentifyRequest(point);
                             }
-                            if (registry.byId("editToggle").checked || this.config.notesMode === "copy")
+                            if (registry.byId("editToggle").checked || this.config.notesMode === "copy") {
                                 this.createEditor();
+                            }
 
                         }));
                     } else {
                         if (this.imageryLayer)
                             this.makeIdentifyRequest(point);
-                        if (registry.byId("editToggle").checked || this.config.notesMode === "copy")
+                        if (registry.byId("editToggle").checked || this.config.notesMode === "copy") {
                             this.createEditor();
+                        }
 
                     }
 
@@ -425,6 +468,7 @@ define([
             }));
         },
         selectFeature: function () {
+            this.map.infoWindow.set("popupWindow", false);
             var dfd = new Deferred();
             var query = new Query();
             query.objectIds = [this.features[this.recordIndex].attributes[this.visitLayer.objectIdField]];
@@ -476,19 +520,21 @@ define([
                 this.identifyRequest(point);
             }
         },
-       identifyRequest: function(point){
-           var identify = new IdentifyTask(this.imageryLayer.url);
-          var parameters = new ImageServiceIdentifyParameters();
-          parameters.geometry =point;
-          parameters.mosaicRule = this.imageryLayer.mosaicRule;
-          parameters.renderingRule = this.imageryLayer.renderingRule;
-          parameters.returnGeometry = false;
-          parameters.returnCatalogItems = true;
-          identify.execute(parameters);
-       },
+        identifyRequest: function (point) {
+            var identify = new IdentifyTask(this.imageryLayer.url);
+            var parameters = new ImageServiceIdentifyParameters();
+            parameters.geometry = point;
+            parameters.mosaicRule = this.imageryLayer.mosaicRule;
+            parameters.renderingRule = this.imageryLayer.renderingRule;
+            parameters.returnGeometry = false;
+            parameters.returnCatalogItems = true;
+            identify.execute(parameters);
+        },
         makeIdentifyRequest: function (geometry) {
             if (this.imageryLayer.visible) {
+                this.showImageAttributes = true;
                 this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
+                this.map.infoWindow.set("popupWindow", true);
             }
         },
         showAttributes: function (popup) {
@@ -497,12 +543,13 @@ define([
             for (var a in popup.features) {
                 if (visit && imagery)
                     break;
-                if (!visit && popup.features[a]._layer.id === this.config.visitLayer.id) {
-                    visit = true;
-                    this.fillVisitAttributes(popup.features[a]);
-                }
-                if (!imagery && popup.features[a]._layer.id === this.config.imageLayer.id) {
+                /*   if (!visit && popup.features[a]._layer.id === this.config.visitLayer.id) {
+                 visit = true;
+                 this.fillVisitAttributes(popup.features[a]);
+                 }*/
+                if (!imagery && this.showImageAttributes && popup.features[a]._layer.id === this.config.imageLayer.id) {
                     imagery = true;
+                    this.showImageAttributes = false;
                     this.fillImageryAttributes(popup.features[a]);
                 }
             }
@@ -517,7 +564,7 @@ define([
                 this.currentVisitFeature = feature;
                 var content = feature.getContent();
                 registry.byId("visitContentDiv").set("content", content);
-                if (this.config.statusField && registry.byId("setStatus")){
+                if (this.config.statusField && registry.byId("setStatus")) {
                     registry.byId("setStatus").set("value", this.visitAttributes[this.config.statusField]);
                 }
             }
@@ -539,7 +586,7 @@ define([
                                 options.push({"label": codedValues[b].name, value: codedValues[b].code});
                             }
                         } else {
-                            var options = [ {"label": this.i18n.noStat, value: "0"},{"label": this.i18n.follow, value: "-1"}, {"label": this.i18n.okay, value: "1"}];
+                            var options = [{"label": this.i18n.noStat, value: this.i18n.noStat}, {"label": this.i18n.follow, value: this.i18n.follow}, {"label": this.i18n.okay, value: this.i18n.okay}];
                         }
                         break;
 
@@ -552,16 +599,21 @@ define([
         },
         updateVisitLayer: function () {
             var graphic = this.currentVisitFeature;
-            graphic.attributes[this.config.statusField] = registry.byId("setStatus").get("value");
-            this.visitLayer.applyEdits(null, [graphic], null, lang.hitch(this, function () {
-                this.visitLayer.refresh();
-                this.selectFeature();
-            }));
-            if(!this.notesLayer) {
-                document.getElementById("nextBtn").click();
+            if (graphic.attributes[this.config.statusField] !== registry.byId("setStatus").get("value")) {
+                graphic.attributes[this.config.statusField] = registry.byId("setStatus").get("value");
+                this.visitLayer.applyEdits(null, [graphic], null, lang.hitch(this, function () {
+                    this.visitLayer.refresh();
+                    this.selectFeature().then(lang.hitch(this, function () {
+                        this.map.infoWindow.set("popupWindow", true);
+                    }));
+                }));
+                if (!this.notesLayer) {
+                    document.getElementById("nextBtn").click();
+                }
             }
         },
         addToNotesLayer: function () {
+            this.map.infoWindow.set("popupWindow", false);
             var attributes = {};
             var graphic = new Graphic(this.currentVisitFeature.geometry, null, this.notesAttributes);
 
@@ -583,7 +635,11 @@ define([
                         layer.redraw();
                         layer.refresh();
                         this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
-
+                        setTimeout(lang.hitch(this, function() {
+                           this.map.infoWindow.set("popupWindow", true);
+                            this.map.setInfoWindowOnClick(true);
+                        }),5000);
+                        
                     }));
                 }
             }), lang.hitch(this, function () {
@@ -592,7 +648,10 @@ define([
                     layer.redraw();
                     layer.refresh();
                     this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
-
+                    setTimeout(lang.hitch(this, function() {
+                           this.map.infoWindow.set("popupWindow", true);
+                           this.map.setInfoWindowOnClick(true);
+                        }),5000);
                 }));
             }));
 
@@ -644,20 +703,21 @@ define([
         setupEditor: function () {
             if (this.config.notesLayer.id) {
                 var layer = this.map.getLayer(this.config.notesLayer.id);
+                console.log(layer);
                 if (this.config.notesMode !== "copy")
                     domStyle.set("editCheckbox", "display", "block");
                 else
                     domStyle.set("notesEditor", "display", "block");
                 registry.byId("editToggle").set("disabled", false);
                 if (layer && layer.isEditable()) {
-                    if(layer.arcgisProps.title){
+                    if (layer.arcgisProps.title) {
                         layer.name = layer.arcgisProps.title;
                     }
                     this.templateLayers.push(layer);
                     layer.on("edits-complete", lang.hitch(this, function (response) {
-                    if (this.config.notesMode === "one") {
-                    this.features[this.recordIndex].noteAdded = response.adds[0].objectId;
-                    }
+                        if (this.config.notesMode === "one") {
+                            this.features[this.recordIndex].noteAdded = response.adds[0].objectId;
+                        }
                         layer.refresh();
                     }));
                     if (layer && layer.infoTemplate && layer.infoTemplate.info && layer.infoTemplate.info.fieldInfos) {
@@ -673,7 +733,7 @@ define([
                                     time: true
                                 };
                             }
-                            if (field.visible) {
+                            if (field.isEditable) {
                                 fieldInfos.push(field);
                             }
                         }));
@@ -707,7 +767,6 @@ define([
         createEditor: function () {
             this._destroyEditor();
 
-
             var templatePicker = new TemplatePicker({
                 featureLayers: this.templateLayers,
                 grouping: true,
@@ -728,7 +787,7 @@ define([
             var settings = {
                 map: this.map,
                 templatePicker: templatePicker,
-                layerInfos: [{"featureLayer": this.templateLayers[0], "disableAttributeUpdate": false}],
+                layerInfos: [{"featureLayer": this.templateLayers[0], "fieldInfos": this.templateLayers[0].fieldInfos,"disableAttributeUpdate": false}],
                 enableUndoRedo: false,
                 toolbarVisible: false,
                 createOptions: {
@@ -746,6 +805,7 @@ define([
                 }
             };
             this.map.enableSnapping();
+            
             this.editor = new Editor({
                 id: "featureEditor",
                 settings: settings
@@ -759,17 +819,43 @@ define([
                 for (var a = 0; a < nodes.length; a++) {
                     nodes[a].tabIndex = -1;
                 }
-
+                this.map.infoWindow.set("popupWindow",false);
+                console.log(this.map.infoWindow);
                 if (this.config.notesMode === "copy")
                     this.addToNotesLayer();
             }));
 
             this.changeToServiceRenderer(settings);
             this.editor.startup();
-            this.editor.templatePicker.on("selection-change", lang.hitch(this, function () {
-                if (this.editor.templatePicker.getSelected())
+            this.editor.templatePicker.on("selection-change", lang.hitch(this, function (value) {
+                
+                if (this.editor.templatePicker.getSelected()) {
+                    this.map.setMapCursor("crosshair");
+                    this.templateActive = value.target._selectedCell.children[0];
                     this.fillDefaultValues();
+                } else {
+
+                    if (this.config.notesMode === "many" && this.keepTemplateActive) {
+                        this.keepTemplateActive = false;
+                        if (this.templateActive) {
+                            on.emit(this.templateActive, "click", {
+                                bubbles: true,
+                                cancelable: true
+                            });
+                        }
+                    } else {
+                        this.map.setMapCursor("default");
+                    }
+                }
             }));
+
+            this.editor._drawToolbar.on("draw-complete", lang.hitch(this, function (value) {
+                if (value) {
+                    if (this.config.notesMode === "many")
+                        this.keepTemplateActive = true;
+                }
+            }));
+
             this.editor.templatePicker.update(true);
             this.editor.attributeInspector.on("delete", lang.hitch(this, function (evt) {
                 if (this.config.notesMode === "one" && this.features[this.recordIndex].noteAdded && this.features[this.recordIndex].noteAdded === evt.feature.attributes[this.notesLayer.objectIdField]) {
@@ -780,11 +866,6 @@ define([
                     }), 1000);
                 }
             }));
-            /*       var saveButton = new Button({ label: "Save", "class": "saveButton"},domConstruct.create("div"));
-             domConstruct.place(saveButton.domNode, this.editor.attributeInspector.deleteBtn.domNode, "before");
-             saveButton.on("click", lang.hitch(this,function() {
-             console.log(this.editor.attributeInspector);
-             }));*/
             if (this.notesAttributes !== {})
                 registry.byId("attributeInspectorDiv").set("content", this.editor.attributeInspector.domNode);
 
@@ -798,7 +879,8 @@ define([
                     domStyle.set("textEditor", "display", "none");
                     this.features[this.recordIndex].noteAdded = true;
                 }
-                if (evt.adds[0] && evt.adds.length > 0) {
+
+                if (evt.adds && evt.adds[0] && evt.adds.length > 0) {
                     for (var a in evt.adds[0].attributes) {
                         for (var b in this.imageryPopupFields) {
                             if (a === this.imageryPopupFields[b]) {
@@ -812,22 +894,28 @@ define([
                                 break;
                             }
                         }
-                    }
 
+                    }
+                    if (this.recordVisitOBJECTID && this.visitLayer) {
+                        var objectId = this.visitLayer.objectIdField || "OBJECTID";
+                        evt.adds[0].attributes[this.recordVisitOBJECTID] = this.visitAttributes[objectId];
+                    }
                     if (this.editor)
                         this.editor.attributeInspector.refresh();
                 }
             }));
         },
         errorNotification: function (error) {
-
+                     console.log(error);
         },
         _destroyEditor: function () {
+
             if (this.editor) {
                 this.editor.destroy();
                 this.editor = null;
 
             }
+            
         },
         revertToLayerRenderer: function () {
             array.forEach(this._layerInfoParamArrayUseForRervertRenderer, function (layerInfo) {
@@ -840,18 +928,77 @@ define([
         },
         createCheckBox: function (value, label) {
 
-                    domConstruct.place("<div style='margin: 0.6em;'><div id='" + value + "'></div><label for='" + value + "'>" + label + "</label></div>", "layerAttributesContent", "last");
-                    var layer = this.map.getLayer(this[value].id);
-                    new CheckBox({
-                        checked: layer.visible,
-                        onChange: lang.hitch(this, function (flag) {
-                            if (flag)
-                                this.map.getLayer(this[value].id).show();
-                            else
-                                this.map.getLayer(this[value].id).hide();
-                        })
-                    }, value).startup();
-                },
+            domConstruct.place("<div style='margin: 0.6em;'><div id='" + value + "'></div><label for='" + value + "'>" + label + "</label></div>", "layerAttributesContent", "last");
+            var layer = this.map.getLayer(this[value].id);
+            new CheckBox({
+                checked: layer.visible,
+                onChange: lang.hitch(this, function (flag) {
+                    if (flag)
+                        this.map.getLayer(this[value].id).show();
+                    else
+                        this.map.getLayer(this[value].id).hide();
+                })
+            }, value).startup();
+        },
+        createAndDisplayCircle: function (point) {
+            for (var s = this.map.graphics.graphics.length - 1; s >= 0; s--) {
+                if (this.map.graphics.graphics[s].attributes && this.map.graphics.graphics[s].attributes.distanceCircle) {
+                    this.map.graphics.remove(this.map.graphics.graphics[s]);
+                    break;
+                }
+            }
+            if (point.spatialReference.wkid && (point.spatialReference.wkid === 102100 || point.spatialReference.wkid === 3857)) {
+                var WMSF = 1 / Math.cos((Math.PI / 2) - (2 * Math.atan(Math.exp((-1 * point.y) / 6378137))));
+            } else
+                var WMSF = 1;
+            if (this.config.circleProperties.type === "circle") {
+                var geometry = new Circle(point, {
+                    "radius": (this.config.circleProperties.radius * WMSF)
+                });
+            } else {
+                if (point.spatialReference.wkid && point.spatialReference.wkid === 4326) {
+                    point = webMercatorUtils.geographicToWebMercator(point);
+                    var convertToWebM = true;
+                }
+
+
+                var side = (this.config.circleProperties.radius / 2) * WMSF;
+
+                var xmin = point.x - side;
+                var xmax = point.x + side;
+                var ymin = point.y - side;
+                var ymax = point.y + side;
+
+                var polygonJson = {"rings": [[[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin], [xmin, ymin]]], "spatialReference": point.spatialReference.toJson()};
+                var geometry = new Polygon(polygonJson);
+                if (convertToWebM)
+                    geometry = webMercatorUtils.webMercatorToGeographic(geometry);
+            }
+            var circleSymbol = new SimpleFillSymbol();
+            circleSymbol.setStyle(SimpleFillSymbol.STYLE_NULL);
+            circleSymbol.setOutline(new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(this.config.circleProperties.color), this.config.circleProperties.width));
+            var graphic = new Graphic(geometry, circleSymbol, {distanceCircle: true});
+            this.map.graphics.add(graphic);
+        },
+        
+        keyPressEvent: function (event) {
+            var keyCode = event.which;
+            if (event.altKey) {
+                switch (keyCode) {
+                    case 80:
+                    {
+                        document.getElementById("prevBtn").click();
+                        break;
+                    }
+                    case 78:
+                    {
+                        document.getElementById("nextBtn").click();
+                        break;
+                    }
+                   
+                }
+            } 
+        },
         showLoading: function () {
             domStyle.set("loadingContentPane", "display", "block");
         },

@@ -16,7 +16,11 @@
  */
 define({
   "map": {
-    "error": "Não foi possível criar mapa"
+    "error": "Não foi possível criar mapa",
+    "licenseError": {
+      "message": "A sua conta não está licenciada para usar aplicações configuráveis não públicas. Peça ao administrador da sua organização para lhe atribuir um tipo de utilizador que inclua a licença para aplicações essenciais ou aplicações essenciais complementares.",
+      "title": "Não licenciado"
+    }
   },
   "nav": {
     "close": "Fechar"
@@ -24,96 +28,45 @@ define({
   "basemap": {
     "title": "Galeria de Mapas Base"
   },
-  "operationalLayers": {
-    "title": "Camadas Operacionais",
-    "error": "Não existem camadas operacionais no mapa."
-  },
-  "layerSelector": {
-    "active": "Camada Ativa",
-    "comparison": "Camada de Comparação",
-    "other": "Outro",
-    "result": "Resultado",
-    "title": "Seletor de Camadas",
-    "resultSave": "Adicionar a camada Resultado à lista de camadas de comparação",
-    "copy": "Copiar camada ativa para camada de comparação.",
-    "swap": "Alternar entre camada ativa e de comparação."
-  },
-  "renderer": {
-    "title": "Renderizador",
-    "stretch": "Parâmetros de Esticamento",
-    "stretchType": "Tipo de Esticamento",
-    "dra": "DRA",
-    "draText": "Melhoria das atualizações de Dynamic Range Adjustment com base na visualização atual",
-    "gamma": "Gama",
-    "apply": "Aplicar",
-    "top": "Excluir superior",
-    "bottom": "Excluir inferior",
-    "topText": " Excluir a percentagem x superior do histograma",
-    "bottomText": " Excluir a percentagem x inferior do histograma",
-    "stdDev": "# de Desvio Padrão",
-    "layer": "Camada Atual",
-    "error": "Não existem Camadas de Imagens visíveis no mapa."
-  },
-  "imageSelector": {
-    "title": "Seletor de Imagens",
-    "enable": "Ativar Seletor de Imagens",
-    "secondary": "Definir Ativo como Camada de Comparação.",
-    "dropDown": "Exibir imagens em lista pendente.",
-    "refresh": "Atualizar consulta com base na extensão atual.",
-    "show": "Mostrar",
-    "age": "Idade",
-    "zoom": "Ampliar para selecionar imagens.",
-    "error": "Não existem Camadas de Imagens visíveis no mapa.",
-    "error1": "O campo não se encontra especificado.",
-    "error2": "Não existe campo OBJECTID.",
-    "error3": "Não existe campo de Categoria",
-    "error4": "Não é possível aplicar ação para a camada.",
-    "error5": "Serviços anteriores à versão 10.2.1 não-suportados.",
-    "error6": "Não existem cenas na extensão atual.",
-    "error7": "Número de pegadas selecionadas excede as 20. Apenas serão exibidas as primeiras 20. Pressione OK para não voltar a avisar.",
-    "slider": "Exibir imagens em slider."
-  },
-  "changeDetection": {
-    "title": "Alterar Deteção",
-    "mode": "Modo",
-    "method": "Método",
-    "positive": "Diferença Positiva",
-    "negative": "Diferença Negativa",
-    "threshold": "Limiar",
-    "difference": "Diferença",
-    "apply": "Aplicar",
-    "error": "Alterar Deteção funciona com duas imagens com datas diferentes do mesmo serviço.<br />Primeiro, utilize o Seletor de Imagens para definir uma imagem,<br />depois clique no botão <img src='images/down.png' height='14'/> e selecione a segunda imagem.<br />Regresse a este controlo para prosseguir com a alteração de deteção."
-  },
-  "editor": {
-    "title": "Editor",
-    "error": "Não se encontra selecionada qualquer Camada de Edição.",
-    "error1": "Acesso negado. Não é possível editar as camadas."
+  "visit": {
+    "title": "Visita",
+    "visit": "Atributos de Visita",
+    "image": "Atributos de Imagem",
+    "addText": "Selecione um símbolo e clique no mapa.",
+    "next": "Seguinte",
+    "prev": "Anterior",
+    "error": "Acesso negado. Não é possível editar camada.",
+    "edit": "Editar Notas",
+    "save": "Guardar",
+    "filter": "Filtrar por estado de visita",
+    "all": "Todos",
+    "record": "Registo",
+    "of": "de",
+    "error1": "Por favor, introduza um valor numérico válido.",
+    "layer": "Alternância de Camadas",
+    "imageLayer": "Imagem",
+    "visitLayer": "Visita",
+    "notesLayer": "Notas",
+    "layerError": "Não se encontram quaisquer camadas presentes no mapa.",
+    "follow": "Acompanhamento",
+    "okay": "OK",
+    "noStat": "Sem Estado",
+    "left": "Esquerda",
+    "up": "Para Cima",
+    "down": "Para Baixo",
+    "right": "Direita",
+    "center": "Centrar",
+    "press": "Pressione",
+    "scan": "Analisar imagem",
+    "scale": "Reinicializar escala",
+    "view": "Reinicializar visualização",
+    "search": "A pesquisar..."
   },
   "measurement": {
     "title": "Medição de Imagens",
     "error": "Funcionalidades de Mensuração não suportadas."
   },
-  "export": {
-    "title": "Exportar",
-    "mode": "Modo",
-    "titleText": "Título",
-    "description": "Descrição",
-    "tags": "Palavras-chave",
-    "submit": "Enviar",
-    "pixel": "Tamanho de Pixeis",
-    "outsr": "Referência Espacial de Saída",
-    "renderer": "Renderizador Atual",
-    "extent": "Definir Extensão",
-    "text": "Caso Renderizador Atual se encontre selecionado, a renderização<br /> é exportada, de outro modo, os valores de dados originais<br/>serão exportados.",
-    "error": "Não existem camadas de imagens visíveis no mapa.",
-    "error1": "O Título é obrigatório.",
-    "error2": "Palavra(s) Chave são obrigatórias."
-  },
-  "compare": {
-    "title": "Comparar Narrativa",
-    "slider": "Controlo Deslizante de Transparência",
-    "hSwipe": "Varrimento Horizontal",
-    "vSwipe": "Varrimento Vertical",
-    "error": "Não existem Camadas de Imagens disponíveis para comparação."
+  "about": {
+    "title": "Sobre"
   }
 });

@@ -16,7 +16,11 @@
  */
 define({
   "map": {
-    "error": "Nelze vytvořit mapu"
+    "error": "Nelze vytvořit mapu",
+    "licenseError": {
+      "message": "Váš účet nevlastní licenci k používání konfigurovatelných aplikací, které nejsou veřejné. Požádejte prosím správce své organizace, aby vám přidělil typ uživatele, jehož součástí jsou základní aplikace nebo doplňková licence základních aplikací.",
+      "title": "Chybí licence"
+    }
   },
   "nav": {
     "close": "Zavřít"
@@ -24,96 +28,45 @@ define({
   "basemap": {
     "title": "Galerie podkladových map"
   },
-  "operationalLayers": {
-    "title": "Operační vrstvy",
-    "error": "V mapě nejsou k dispozici žádné operační vrstvy."
-  },
-  "layerSelector": {
-    "active": "Aktivní vrstva",
-    "comparison": "Srovnávací vrstva",
-    "other": "Ostatní",
-    "result": "Výsledek",
-    "title": "Nástroj pro výběr vrstev",
-    "resultSave": "Přidat výslednou vrstvu do seznamu srovnávacích vrstev",
-    "copy": "Kopírovat aktivní vrstvu do srovnávací vrstvy.",
-    "swap": "Přehodit aktivní vrstvu a srovnávací vrstvu"
-  },
-  "renderer": {
-    "title": "Vykreslovač",
-    "stretch": "Parametry roztažení",
-    "stretchType": "Typ roztažení hodnot pro použití barevné škály",
-    "dra": "Dynamické roztažení",
-    "draText": "Vylepšení aktualizace dynamického roztažení na základě aktuálního zobrazení",
-    "gamma": "Gama",
-    "apply": "Použít",
-    "top": "Vyloučit horní část",
-    "bottom": "Vyloučit spodní část",
-    "topText": " Vyloučit horní část x procenta z histogramu",
-    "bottomText": " Vyloučit spodní část x procenta z histogramu",
-    "stdDev": "Č. směr. odch.",
-    "layer": "Aktuální vrstva",
-    "error": "V mapě nejsou viditelné žádné vrstvy imagery."
-  },
-  "imageSelector": {
-    "title": "Nástroj pro volbu snímků",
-    "enable": "Povolit nástroj pro volbu snímků",
-    "secondary": "Nastavit aktivní vrstvu jako srovnávací vrstvu.",
-    "dropDown": "Zobrazit snímky v rozbalovacím seznamu.",
-    "refresh": "Obnovit dotaz podle aktuálního rozsahu.",
-    "show": "Zobrazit",
-    "age": "Věk",
-    "zoom": "Přiblížit pro volbu snímků.",
-    "error": "V mapě nejsou viditelné žádné vrstvy imagery.",
-    "error1": "Pole není specifikováno.",
-    "error2": "Chybí pole OBJECTID.",
-    "error3": "Chybí pole kategorie.",
-    "error4": "Činnost pro vrstvu nelze provést.",
-    "error5": "Služby ve verzi nižší než 10.2.1 nejsou podporovány.",
-    "error6": "V aktuálním rozsahu nejsou žádné scény.",
-    "error7": "Počet zvolených obrysů je větší než 20. Bude zobrazeno pouze prvních 20. Aby se toto varování již nezobrazovalo, stiskněte OK.",
-    "slider": "Zobrazit snímky na posuvníku."
-  },
-  "changeDetection": {
-    "title": "Detekování změn",
-    "mode": "Režim",
-    "method": "Metoda",
-    "positive": "Pozitivní rozdíl",
-    "negative": "Negativní rozdíl",
-    "threshold": "Práh",
-    "difference": "Rozdíl",
-    "apply": "Použít",
-    "error": "Funkce detekování změn pracuje se dvěma snímky s různými daty ze stejné služby.<br />Nejprve použijte nástroj pro volbu snímků pro volbu jednoho snímku a poté <br />klikněte na tlačítko <img src='images/down.png' height='14'/> a zvolte druhý snímek. <br />Poté se vraťte k tomuto ovladači pro pokračování v detekování změn."
-  },
-  "editor": {
-    "title": "Editor",
-    "error": "Není vybrána žádná vrstva pro úpravu.",
-    "error1": "Přístup odepřen. Vrstvy nelze editovat."
+  "visit": {
+    "title": "Návštěvy",
+    "visit": "Atributy návštěv",
+    "image": "Atributy snímku",
+    "addText": "Vyberte symbol a klikněte na mapu.",
+    "next": "Další",
+    "prev": "Předchozí",
+    "error": "Přístup byl odepřen. Vrstvu nelze upravit.",
+    "edit": "Upravit poznámky",
+    "save": "Uložit",
+    "filter": "Filtrovat podle stavu návštěvy",
+    "all": "Vše",
+    "record": "Záznam",
+    "of": "z",
+    "error1": "Zadejte platnou číselnou hodnotu.",
+    "layer": "Přepnutí vrstvy",
+    "imageLayer": "Snímky",
+    "visitLayer": "Návštěvy",
+    "notesLayer": "Poznámky",
+    "layerError": "V mapě nejsou k dispozici žádné vrstvy.",
+    "follow": "Sledovat",
+    "okay": "OK",
+    "noStat": "Žádný stav",
+    "left": "Levá",
+    "up": "Nahoru",
+    "down": "Dolů",
+    "right": "Pravá",
+    "center": "Střed",
+    "press": "Stisknutím",
+    "scan": "Skenovat snímek",
+    "scale": "Obnovit měřítko",
+    "view": "Obnovit zobrazení",
+    "search": "Probíhá vyhledávání…"
   },
   "measurement": {
     "title": "Měření snímku",
     "error": "Funkcionalita měření není povolena."
   },
-  "export": {
-    "title": "Exportovat",
-    "mode": "Režim",
-    "titleText": "Název",
-    "description": "Popis",
-    "tags": "Štítky",
-    "submit": "Odeslat",
-    "pixel": "Velikost pixelu",
-    "outsr": "Výstupní souřadnicový systém",
-    "renderer": "Aktuální vykreslovač",
-    "extent": "Definovat rozsah",
-    "text": "Pokud je zaškrtnuto pole Aktuální vykreslovač,<br /> vykreslení se vyexportuje, jinak se vyexportují hodnoty <br/> původních dat.",
-    "error": "V mapě nejsou viditelné žádné vrstvy imagery.",
-    "error1": "Je požadován název.",
-    "error2": "Je požadován tag(tagy)."
-  },
-  "compare": {
-    "title": "Porovnání",
-    "slider": "Ovladač průhlednosti",
-    "hSwipe": "Horizontální překrytí",
-    "vSwipe": "Vertikální překrytí",
-    "error": "V mapě nejsou dostupné žádné vrstvy imagery pro porovnání."
+  "about": {
+    "title": "Informace o aplikaci"
   }
 });

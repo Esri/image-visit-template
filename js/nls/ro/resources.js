@@ -16,104 +16,57 @@
  */
 define({
   "map": {
-    "error": "Imposibil de creat harta"
+    "error": "Imposibil de creat harta",
+    "licenseError": {
+      "message": "Contul dvs. nu este licențiat să utilizeze aplicații configurabile care nu sunt publice. Solicitați-i administratorului organizației să vă aloce un tip de utilizator care include aplicații esențiale sau o licență pentru aplicații esențiale de completare.",
+      "title": "Nelicențiat"
+    }
   },
   "nav": {
     "close": "Închidere"
   },
   "basemap": {
-    "title": "Galerie de hărţi fundal"
+    "title": "Galerie de hărți fundal"
   },
-  "operationalLayers": {
-    "title": "Straturi tematice operaţionale",
-    "error": "Niciun strat tematic operațional pe hartă."
-  },
-  "layerSelector": {
-    "active": "Strat tematic activ",
-    "comparison": "Strat tematic de comparație",
-    "other": "Altul",
-    "result": "Rezultat",
-    "title": "Selector de straturi tematice",
-    "resultSave": "Adăugare strat tematic de rezultate în lista cu straturi tematice de comparație",
-    "copy": "Copiere strat tematic activ pe strat tematic de comparație.",
-    "swap": "Schimb între strat tematic activ și strat tematic de comparație."
-  },
-  "renderer": {
-    "title": "Reprezentare",
-    "stretch": "Parametri de întindere",
-    "stretchType": "Tip întindere",
-    "dra": "DRA",
-    "draText": "Ajustarea de domeniu dinamic actualizează intensificarea în baza vizualizării curente",
-    "gamma": "Gamma",
-    "apply": "Aplicare",
-    "top": "Excludere zonă superioară",
-    "bottom": "Excludere zonă inferioară",
-    "topText": " Excludere x procente din zona superioară a histogramei",
-    "bottomText": " Excludere x procente din zona inferioară a histogramei",
-    "stdDev": "# din abatere standard",
-    "layer": "Strat tematic curent",
-    "error": "Niciun strat tematic imagistic vizibil pe hartă."
-  },
-  "imageSelector": {
-    "title": "Selector imagine",
-    "enable": "Activare selector imagine",
-    "secondary": "Setare Activ drept strat tematic de comparație.",
-    "dropDown": "Vizualizare imagini în listă derulantă.",
-    "refresh": "Împrospătare căutare pe baza extinderii curente.",
-    "show": "Afişare",
-    "age": "Vârstă",
-    "zoom": "Focalizare pentru selectare imagini.",
-    "error": "Niciun strat tematic imagistic vizibil pe hartă.",
-    "error1": "Câmpul nu este specificat.",
-    "error2": "Niciun câmp OBJECTID.",
-    "error3": "Niciun câmp pentru categorie.",
-    "error4": "Nu se poate efectua acțiunea pentru stratul tematic.",
-    "error5": "Servicii anterioare 10.2.1 nesuportate.",
-    "error6": "Nicio scenă în extinderea curentă.",
-    "error7": "Numărul de urme selectate depășește 20. Doare primele 20 se vor afișa. Apăsați OK pentru a nu recepționa din nou avertizarea.",
-    "slider": "Prezentare imagini pe cursor."
-  },
-  "changeDetection": {
-    "title": "Detectare modificare",
-    "mode": "Mod",
-    "method": "Metodă",
-    "positive": "Diferență pozitivă",
-    "negative": "Diferență negativă",
-    "threshold": "Prag",
-    "difference": "Diferență",
-    "apply": "Aplicare",
-    "error": "Detectarea modificării lucrează cu două imagini din date diferite pentru același serviciu.<br />Mai întâi utilizați selector de imagini pentru a defini o imagine,<br />apoi faceți clic pe butonul <img src='images/down.png' height='14'/> și selectați a doua imagine.<br />Reveniți la această comandă pentru a continua cu detectarea modificării."
-  },
-  "editor": {
-    "title": "Editor",
-    "error": "Niciun strat tematic de editare selectat.",
-    "error1": "Acces respins. Straturile tematice nu se pot edita."
+  "visit": {
+    "title": "Accesați",
+    "visit": "Accesați atribute",
+    "image": "Atributele imaginilor",
+    "addText": "Selectați un simbol și faceți clic pe hartă.",
+    "next": "Înainte",
+    "prev": "Înapoi",
+    "error": "Acces refuzat. Stratul tematic nu poate fi editat.",
+    "edit": "Editare note",
+    "save": "Salvare",
+    "filter": "Filtrare după starea vizitei",
+    "all": "Toate",
+    "record": "Înregistrare",
+    "of": "din",
+    "error1": "Introduceți o valoare numerică validă.",
+    "layer": "Comutare strat tematic",
+    "imageLayer": "Imagini",
+    "visitLayer": "Accesaţi",
+    "notesLayer": "Note",
+    "layerError": "Niciun strat tematic prezent pe hartă.",
+    "follow": "Urmăriţi",
+    "okay": "În regulă",
+    "noStat": "Nicio stare",
+    "left": "Stânga",
+    "up": "Sus",
+    "down": "Jos",
+    "right": "Dreapta",
+    "center": "Centru",
+    "press": "Apăsaţi",
+    "scan": "Scanați imaginea",
+    "scale": "Resetați scara",
+    "view": "Resetați imaginea",
+    "search": "Se caută..."
   },
   "measurement": {
     "title": "Măsurare imagine",
-    "error": "Capacități de măsurare nesuportate."
+    "error": "Capacități de măsurare neacceptate."
   },
-  "export": {
-    "title": "Export",
-    "mode": "Mod",
-    "titleText": "Titlu",
-    "description": "Descriere",
-    "tags": "Etichete",
-    "submit": "Trimitere",
-    "pixel": "Dimensiune pixeli",
-    "outsr": "Referinţă spaţială de ieşire",
-    "renderer": "Reprezentare curentă",
-    "extent": "Definire extindere",
-    "text": "Dacă se verifică reprezentarea curentă, se exportă<br /> reprezentare, în caz contrar se exportă valorile datelor originale<br/>.",
-    "error": "Niciun strat tematic imagistic vizibil pe hartă.",
-    "error1": "Este necesar un titlu.",
-    "error2": "Este necesară o etichetă."
-  },
-  "compare": {
-    "title": "Comparare",
-    "slider": "Cursor transparență",
-    "hSwipe": "Trecere orizontală",
-    "vSwipe": "Trecere verticală",
-    "error": "Niciun strat tematic imagistic disponibil pentru comparație."
+  "about": {
+    "title": "Despre"
   }
 });

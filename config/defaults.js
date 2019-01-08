@@ -19,8 +19,8 @@ define({
 //Default configuration settings for the application. This is where you'll define things like a bing maps key,
 //default web map, default app color theme and more. These values can be overwritten by template configuration settings and url parameters.
     "appid": "",
-    "webmap": "d5e02a0c1f2b4ec399823fdd3c2fdebd",
-    "oauthappid": null,
+    "webmap": "12c82a217dda41a2aae7ba166345d990",
+    "oauthappid":  "arcgisWebApps",
     //Group templates must support a group url parameter. This will contain the id of the group.
     "group": "",
     //Enter the url to the proxy if needed by the application. See the 'Using the proxy page' help topic for details
@@ -37,7 +37,7 @@ define({
     "widgetTitleColor": "#008299",
     "toolsIconColor": "#008299",
     "toolOnByDefault": "none",
-     "visitStatusFilter": "All",
+    "visitStatusFilter": "All",
     "aboutFlag": false,
     "aboutText": "",
     "basemapFlag": true,
@@ -48,24 +48,30 @@ define({
     "layerFlag": true,
     "imageLayer": {"id": null},
     "zoomLevel": "",
+    "customZoomLevel":"",
     "visitLayer": {"id": null, "fields": []},
     "imageFilterFlag": false,
     "visitFilterField": "",
     "imageFilterField": "",
     "userNotesFlag": false,
-    "notesLayer": {"id": null},
+    "notesLayer": {"id": null,"fields":[]},
     "notesMode": "",
+    "distanceCircleFlag": false,
+    "graphicType": "circle",
+    "radius": 20,
+    "circleColor": "red",
+    "thickness": 2,
     "measurementFlag": false,
     "angularUnit": "esriDUDecimalDegrees",
     "linearUnit": "esriMeters",
     "areaUnit": "esriSquareMeters",
-    "units":"english",
+    "units": "english",
     "editable": true,
     "disableGeometryUpdate": false,
     // Define background and text colors for the app.
     "mapZoom": true, // set to false to disable map zoom slider
     "search": false, // Search Tool
-            "searchExtent": true,
+    "searchExtent": true,
     "searchLayers": [{
             "id": "",
             "fields": []

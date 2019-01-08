@@ -16,7 +16,11 @@
  */
 define({
   "map": {
-    "error": "Kreiranje mape nije moguće"
+    "error": "Kreiranje mape nije moguće",
+    "licenseError": {
+      "message": "Vaš nalog nema licencu za korišćenje aplikacija koje mogu da se konfigurišu i nisu javne. Zatražite od administratora organizacije da vam dodeli onaj tip korisnika koji uključuje osnovne aplikacije ili licencu za dodatne osnovne aplikacije.",
+      "title": "Nema licencu"
+    }
   },
   "nav": {
     "close": "Zatvori"
@@ -24,96 +28,45 @@ define({
   "basemap": {
     "title": "Galerija pozadinskih mapa"
   },
-  "operationalLayers": {
-    "title": "Operativni slojevi",
-    "error": "Nema operativnih slojeva u mapi."
-  },
-  "layerSelector": {
-    "active": "Aktivni sloj",
-    "comparison": "Sloj poređenja",
-    "other": "Ostalo",
-    "result": "Rezultat",
-    "title": "Izbornik sloja",
-    "resultSave": "Dodaj sloj sa rezultatima u listu slojeva poređenja",
-    "copy": "Kopiraj aktivni sloj u sloj poređenja",
-    "swap": "Zamenite aktivni i sloj poređenja."
-  },
-  "renderer": {
-    "title": "Prikazivač",
-    "stretch": "Parametri razvlačenja",
-    "stretchType": "Tip razvlačenja",
-    "dra": "DRA",
-    "draText": "Prilagođavanje dinamičkog opsega ažurira poboljšanje na osnovu trenutnog prikaza",
-    "gamma": "Gama",
-    "apply": "Primeni",
-    "top": "Izostavi vrh",
-    "bottom": "Izostavi dno",
-    "topText": " Izostavi gornjih x procenata histograma",
-    "bottomText": " Izostavi donjih x procenata histograma",
-    "stdDev": "Br. standardne devijacije",
-    "layer": "Trenutni sloj",
-    "error": "Na mapi nema vidljivih slojeva snimka."
-  },
-  "imageSelector": {
-    "title": "Izbornik snimaka",
-    "enable": "Omogući izbornik snimaka",
-    "secondary": "Postavite da aktivan sloj bude sloj poređenja.",
-    "dropDown": "Prikaži snimke u padajućoj listi.",
-    "refresh": "Osvežite upit na osnovu trenutnog obuhvata.",
-    "show": "Prikaži",
-    "age": "Starost",
-    "zoom": "Uvećajte za izbor snimaka.",
-    "error": "Na mapi nema vidljivih slojeva snimka.",
-    "error1": "Polje nije navedeno.",
-    "error2": "Nema OBJECTID polja.",
-    "error3": "Nema polja kategorije.",
-    "error4": "Nije moguće izvršiti radnju za sloj.",
-    "error5": "Servisi pre 10.2.1 nisu podržani.",
-    "error6": "Nema scena u trenutnom obuhvatu.",
-    "error7": "Broj izabranih otisaka premašuje 20. Biće prikazano samo prvih 20. Pritisnite „U redu“ da ne dobijete ponovo upozorenje.",
-    "slider": "Prikažite snimke na klizaču."
-  },
-  "changeDetection": {
-    "title": "Promeni otkrivanje",
-    "mode": "Režim",
-    "method": "Metod",
-    "positive": "Pozitivna razlika",
-    "negative": "Negativna razlika",
-    "threshold": "Granica",
-    "difference": "Razlika",
-    "apply": "Primeni",
-    "error": "Otkrivanje promene funkcioniše sa dva snimka od različitih datuma iz istog servisa.<br />Prvo upotrebite Izbornik snimaka za definisanje jednog snimka,<br />zatim kliknite na <img src='images/down.png' height='14'/> dugme i izaberite drugi snimak.<br />Vratite se na ovu kontrolu da biste nastavili sa otkrivanjem promene."
-  },
-  "editor": {
-    "title": "Uređivač",
-    "error": "Nije izabran sloj za uređivanje.",
-    "error1": "Pristup je odbijen. Nije moguće urediti slojeve."
+  "visit": {
+    "title": "Posetite",
+    "visit": "Poseti atribute",
+    "image": "Atributi snimka",
+    "addText": "Odaberite simbol i kliknite na mapu.",
+    "next": "Sledeće",
+    "prev": "Prethodno",
+    "error": "Pristup je odbijen. Sloj ne može da se uređuje.",
+    "edit": "Izmeni napomene",
+    "save": "Sačuvaj",
+    "filter": "Filtriraj po statusu poseta",
+    "all": "Sve",
+    "record": "Zapis",
+    "of": "od",
+    "error1": "Unesite važeću numeričku vrednost.",
+    "layer": "Uključivanje/isključivanje slojeva",
+    "imageLayer": "Slike",
+    "visitLayer": "Posetite",
+    "notesLayer": "Napomene",
+    "layerError": "Nema prisutnih slojeva u mapi.",
+    "follow": "Praćenje",
+    "okay": "U redu",
+    "noStat": "Bez statusa",
+    "left": "Levo",
+    "up": "Gore",
+    "down": "Dole",
+    "right": "Desno",
+    "center": "Centar",
+    "press": "Pritisnite",
+    "scan": "Skeniraj snimak",
+    "scale": "Resetuj razmeru",
+    "view": "Resetuj prikaz",
+    "search": "Pretraživanje..."
   },
   "measurement": {
     "title": "Mere snimka",
     "error": "Mogućnosti merenja nisu podržane."
   },
-  "export": {
-    "title": "Izvezi",
-    "mode": "Režim",
-    "titleText": "Naslov",
-    "description": "Opis",
-    "tags": "Oznake",
-    "submit": "Prosledi",
-    "pixel": "Veličina piksela",
-    "outsr": "Izlazna prostorna referenca",
-    "renderer": "Trenutni prikazivač",
-    "extent": "Definiši obuhvat",
-    "text": "Ako je potvrđena opcija trenutnog prikazivača, prikazivanje<br /> se izvozi, u suprotnom će biti izvezene<br/>vrednosti originalnih podataka.",
-    "error": "Na mapi nema vidljivih slojeva snimka.",
-    "error1": "Naslov je obavezan.",
-    "error2": "Oznaka/oznake je/su obavezni."
-  },
-  "compare": {
-    "title": "Uporedi",
-    "slider": "Klizač za prozirnost",
-    "hSwipe": "Horizontalno prevlačenje",
-    "vSwipe": "Vertikalno prevlačenje",
-    "error": "Nema vidljivih slojeva snimka koji su dostupni za poređenje."
+  "about": {
+    "title": "Osnovni podaci"
   }
 });

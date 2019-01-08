@@ -16,104 +16,57 @@
  */
 define({
   "map": {
-    "error": "Impossibile creare la mappa"
+    "error": "Impossibile creare la mappa",
+    "licenseError": {
+      "message": "L’account non dispone della licenza per l’uso di app configurabili non pubbliche. È necessario richiedere all’amministratore dell'organizzazione l’assegnazione di un tipo di utente che includa le app essenziali o una licenza aggiuntiva per le app essenziali.",
+      "title": "Non Licenziato"
+    }
   },
   "nav": {
-    "close": "Chiudi"
+    "close": "Chiudere"
   },
   "basemap": {
-    "title": "Galleria di mappe di base"
+    "title": "Galleria di basemap"
   },
-  "operationalLayers": {
-    "title": "Layer operativi",
-    "error": "Nessun layer operativo nella mappa."
-  },
-  "layerSelector": {
-    "active": "Layer attivo",
-    "comparison": "Layer di confronto",
-    "other": "Altro",
-    "result": "Risultato",
-    "title": "Selettore layer",
-    "resultSave": "Aggiungi il layer del risultato nell’elenco dei layer di confronto",
-    "copy": "Copia layer attivo nel layer di confronto.",
-    "swap": "Passa al layer attivo e di confronto."
-  },
-  "renderer": {
-    "title": "Renderer",
-    "stretch": "Parametri di estensione",
-    "stretchType": "Tipo di estensione",
-    "dra": "DRA",
-    "draText": "La regolazione dell’intervallo dinamico aggiorna i miglioramenti sulla base della vista attuale",
-    "gamma": "Gamma",
-    "apply": "Applica",
-    "top": "Escludi parte superiore",
-    "bottom": "Escludi parte inferiore",
-    "topText": " Escludi parte superiore per percentuale di istogramma",
-    "bottomText": " Escludi parte inferiore per percentuale di istogramma",
-    "stdDev": "# di dev. std.",
-    "layer": "Layer corrente",
-    "error": "Nessun layer di immagine visibile nella mappa."
-  },
-  "imageSelector": {
-    "title": "Selettore immagini",
-    "enable": "Attiva selettore immagini",
-    "secondary": "Imposta attivo come layer di confronto.",
-    "dropDown": "Mostra immagini nell’elenco a discesa.",
-    "refresh": "Aggiorna query sulla base dell'estensione attuale.",
-    "show": "Mostra",
-    "age": "Età",
-    "zoom": "Effettua uno zoom in sulle immagini selezionate.",
-    "error": "Nessun layer di immagine visibile nella mappa.",
-    "error1": "Campo non specificato.",
-    "error2": "Nessun campo OBJECTID.",
-    "error3": "Nessun campo categoria.",
-    "error4": "Impossibile eseguire un’azione per il layer.",
-    "error5": "Servizi precedenti alla versione 10.2.1 non supportati.",
-    "error6": "Nessuna scena nell’estensione attuale.",
-    "error7": "Il numero di footprint selezionati supera 20. Solo i primi 20 vengono visualizzati. Premere OK per non mostrare più l'avviso.",
-    "slider": "Mostra immagini sul cursore."
-  },
-  "changeDetection": {
-    "title": "Modifica rilevamento",
-    "mode": "Modalità",
-    "method": "Metodo",
-    "positive": "Differenza positiva",
-    "negative": "Differenza negativa",
-    "threshold": "Soglia",
-    "difference": "Differenza",
-    "apply": "Applica",
-    "error": "L’opzione Modifica rilevamento funziona con due immagini di date diverse dallo stesso servizio.<br />Utilizzare prima il Selettore immagini per definire un’immagine,<br />quindi fare clic sul tasto <img src='images/down.png' height='14'/> e selezionare la seconda immagine.<br />Tornare in questa impostazione per procedere con la modifica."
-  },
-  "editor": {
-    "title": "Editor",
-    "error": "Nessun layer di modifica selezionato.",
-    "error1": "Accesso negato. I layer non possono essere modificati."
+  "visit": {
+    "title": "Visita",
+    "visit": "Attributi Visita",
+    "image": "Attributi immagine",
+    "addText": "Selezionare un simbolo e fare clic sulla mappa.",
+    "next": "Successivo",
+    "prev": "Precedente",
+    "error": "Accesso negato. Impossibile modificare il layer.",
+    "edit": "Modifica note",
+    "save": "Salva",
+    "filter": "Filtra per stato visita",
+    "all": "Tutto",
+    "record": "Record",
+    "of": "di",
+    "error1": "Immettere un valore numerico valido.",
+    "layer": "Attivazione/disattivazione layer",
+    "imageLayer": "Immagini",
+    "visitLayer": "Visita",
+    "notesLayer": "Note",
+    "layerError": "Nessun layer presente nella mappa.",
+    "follow": "Segui",
+    "okay": "Ok",
+    "noStat": "Nessuno stato",
+    "left": "Sinistra",
+    "up": "Su",
+    "down": "Giù",
+    "right": "Destra",
+    "center": "Centrato",
+    "press": "Stampa",
+    "scan": "Scansiona immagine",
+    "scale": "Reimposta scala",
+    "view": "Reimposta vista",
+    "search": "Ricerca in corso..."
   },
   "measurement": {
     "title": "Misurazione immagine",
     "error": "Funzioni di misurazione non supportate."
   },
-  "export": {
-    "title": "Esporta",
-    "mode": "Modalità",
-    "titleText": "Titolo",
-    "description": "Descrizione",
-    "tags": "Tag",
-    "submit": "Invia",
-    "pixel": "Dimensione pixel",
-    "outsr": "Riferimento spaziale di output",
-    "renderer": "Renderer attuale",
-    "extent": "Definisci estensione",
-    "text": "Se il Renderer attuale viene selezionato, il rendering<br /> viene esportato, insieme ai valori dei dati originali<br/>.",
-    "error": "Nessun layer di immagine visibile nella mappa.",
-    "error1": "Titolo obbligatorio.",
-    "error2": "Tag obbligatori."
-  },
-  "compare": {
-    "title": "Confronta",
-    "slider": "Cursore trasparenza",
-    "hSwipe": "Scorrimento orizzontale",
-    "vSwipe": "Scorrimento verticale",
-    "error": "Nessun layer di immagine visibile disponibile per il confronto."
+  "about": {
+    "title": "Informazioni su"
   }
 });

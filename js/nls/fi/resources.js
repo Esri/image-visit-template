@@ -16,7 +16,11 @@
  */
 define({
   "map": {
-    "error": "Karttaa ei voi luoda"
+    "error": "Karttaa ei voi luoda",
+    "licenseError": {
+      "message": "Tiliäsi ei ole lisensoitu käyttämään muunneltavissa olevia sovelluksia, jotka eivät ole julkisia. Pyydä organisaatiosi pääkäyttäjää määrittämään sinulle käyttäjätyyppi, joka sisältää keskeiset sovellukset tai keskeisten sovellusten lisäosan lisenssin.",
+      "title": "Ei lisenssiä"
+    }
   },
   "nav": {
     "close": "Sulje"
@@ -24,96 +28,45 @@ define({
   "basemap": {
     "title": "Taustakartat"
   },
-  "operationalLayers": {
-    "title": "Toiminnalliset karttatasot",
-    "error": "Kartassa ei ole toiminnallisia karttatasoja."
-  },
-  "layerSelector": {
-    "active": "Aktiivinen karttataso",
-    "comparison": "Vertailukarttataso",
-    "other": "Muu",
-    "result": "Tulos",
-    "title": "Karttatason valitsin",
-    "resultSave": "Lisää tuloskarttataso vertailukarttatasojen luetteloon",
-    "copy": "Kopioi aktiivinen karttataso vertailukarttatasoon.",
-    "swap": "Vaihda aktiivinen karttataso ja vertailukarttataso."
-  },
-  "renderer": {
-    "title": "Renderöinti",
-    "stretch": "Venytysparametrit",
-    "stretchType": "Venytystyyppi",
-    "dra": "DRA",
-    "draText": "Dynaamisen alueen säätö päivittää parannukset nykyisen näkymän perusteella",
-    "gamma": "Gamma",
-    "apply": "Käytä",
-    "top": "Jätä pois yläosa",
-    "bottom": "Jätä pois alaosa",
-    "topText": " Jätä pois histogrammin yläosasta x prosenttia",
-    "bottomText": " Jätä pois histogrammin alaosasta x prosenttia",
-    "stdDev": "Keskihajontojen määrä",
-    "layer": "Nykyinen taso",
-    "error": "Kartassa ei ole näkyviä kuva-aineistokarttatasoja."
-  },
-  "imageSelector": {
-    "title": "Kuvan valitsin",
-    "enable": "Ota kuvan valitsin käyttöön",
-    "secondary": "Määritä aktiivinen karttataso vertailukarttatasoksi.",
-    "dropDown": "Näytä kuvat avattavassa luettelossa.",
-    "refresh": "Päivitä kysely nykyisen laajuuden perusteella.",
-    "show": "Näytä",
-    "age": "Ikä",
-    "zoom": "Valitse kuvia tarkentamalla.",
-    "error": "Kartassa ei ole näkyviä kuva-aineistokarttatasoja.",
-    "error1": "Kenttää ei ole määritetty.",
-    "error2": "OBJECTID-kenttää ei ole.",
-    "error3": "Luokkakenttää ei ole.",
-    "error4": "Toimintoa ei voi tehdä karttatasossa.",
-    "error5": "Versiota 10.2.1 edeltäviä palveluita ei tueta.",
-    "error6": "Nykyisessä laajuudessa ei ole maisemia.",
-    "error7": "Valittuja peittoalueita on yli 20. Vain ensimmäiset 20 näytetään. Älä varoita uudelleen valitsemalla OK.",
-    "slider": "Näytä kuvat liukusäätimessä."
-  },
-  "changeDetection": {
-    "title": "Muutoksen tunnistus",
-    "mode": "Tila",
-    "method": "Metodi",
-    "positive": "Positiivinen ero",
-    "negative": "Negatiivinen ero",
-    "threshold": "Raja-arvo",
-    "difference": "Ero",
-    "apply": "Käytä",
-    "error": "Muutosten havaitseminen toimii vertailemalla kahta saman palvelun kuvaa eri ajankohdilta.<br />Määritä ensin yksi kuva käyttämällä kuvan valitsinta,<br />napsauta sen jälkeen <img src='images/down.png' height='14'/>-painiketta ja valitse toinen kuva.<br />Jatka muutosten havaitsemista palaamalla tähän ohjausobjektiin."
-  },
-  "editor": {
-    "title": "Muokkaaja",
-    "error": "Muokkauskarttatasoa ei ole valittu.",
-    "error1": "Käyttö estetty. Karttatasoja ei voi muokata."
+  "visit": {
+    "title": "Vieraile",
+    "visit": "Vieraile-karttatason ominaisuustiedot",
+    "image": "Kuvan ominaisuustiedot",
+    "addText": "Valitse symboli ja napsauta karttaa.",
+    "next": "Seuraava",
+    "prev": "Edellinen",
+    "error": "Käyttö estetty. Karttatasoa ei voi muokata.",
+    "edit": "Muokkaa huomautuksia",
+    "save": "Tallenna",
+    "filter": "Suodata vierailun tilan mukaan",
+    "all": "Kaikki",
+    "record": "Tietue",
+    "of": "/",
+    "error1": "Anna kelvollinen numeroarvo.",
+    "layer": "Karttatason vaihto",
+    "imageLayer": "Kuva-aineisto",
+    "visitLayer": "Vieraile",
+    "notesLayer": "Huomautukset",
+    "layerError": "Kartassa ei ole karttatasoja.",
+    "follow": "Seuranta",
+    "okay": "OK",
+    "noStat": "Ei tilaa",
+    "left": "Vasen",
+    "up": "Ylös",
+    "down": "Alas",
+    "right": "Oikea",
+    "center": "Keskitä",
+    "press": "Paina",
+    "scan": "Skannaa kuva",
+    "scale": "Palauta mittakaava",
+    "view": "Palauta näkymä",
+    "search": "Etsitään..."
   },
   "measurement": {
     "title": "Kuvan mitat",
     "error": "Mittausominaisuuksia ei tueta."
   },
-  "export": {
-    "title": "Vie",
-    "mode": "Tila",
-    "titleText": "Otsikko",
-    "description": "Kuvaus",
-    "tags": "Tunnisteet",
-    "submit": "Lähetä",
-    "pixel": "Pikselikoko",
-    "outsr": "Tulosaineiston koordinaattijärjestelmä",
-    "renderer": "Nykyinen renderöijä",
-    "extent": "Määritä laajuus",
-    "text": "Jos nykyinen renderöijä on valittu, renderöinti<br /> viedään, muuten alkuperäiset aineistoarvot<br/> viedään.",
-    "error": "Kartassa ei ole näkyviä kuva-aineistokarttatasoja.",
-    "error1": "Otsikko on pakollinen.",
-    "error2": "Tunniste on pakollinen."
-  },
-  "compare": {
-    "title": "Vertaa",
-    "slider": "Läpinäkyvyyden liukusäädin",
-    "hSwipe": "Vaakasuuntainen pyyhkäisy",
-    "vSwipe": "Pystysuuntainen pyyhkäisy",
-    "error": "Kartassa ei ole näkyviä kuva-aineistokarttatasoja vertailua varten."
+  "about": {
+    "title": "Tietoja"
   }
 });

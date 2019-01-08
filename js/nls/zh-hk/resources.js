@@ -16,7 +16,11 @@
  */
 define({
   "map": {
-    "error": "無法建立地圖"
+    "error": "無法建立地圖",
+    "licenseError": {
+      "message": "您的帳號未經授權，無法使用非公開的可配置應用程式。 請聯繫您的組織管理員，請其將包含基礎應用程式或附加元件基礎應用程式授權的使用者類型指派給您。",
+      "title": "未經許可"
+    }
   },
   "nav": {
     "close": "關閉"
@@ -24,96 +28,45 @@ define({
   "basemap": {
     "title": "底圖庫"
   },
-  "operationalLayers": {
-    "title": "操作圖層",
-    "error": "地圖中沒有操作圖層。"
-  },
-  "layerSelector": {
-    "active": "作用中圖層",
-    "comparison": "比較圖層",
-    "other": "其他",
-    "result": "結果",
-    "title": "圖層選擇器",
-    "resultSave": "在比較圖層清單中新增結果圖層",
-    "copy": "將作用中圖層複製到比較圖層。",
-    "swap": "交換作用中和比較圖層。"
-  },
-  "renderer": {
-    "title": "渲染器",
-    "stretch": "縮放參數",
-    "stretchType": "縮放類型",
-    "dra": "DRA",
-    "draText": "根據目前視圖的動態範圍調整更新增強功能",
-    "gamma": "Gamma",
-    "apply": "套用",
-    "top": "排除頂部",
-    "bottom": "排除底部",
-    "topText": " 直方圖的排除頂部 x 百分比",
-    "bottomText": " 直方圖的排除底部 x 百分比",
-    "stdDev": "標準差的數量",
-    "layer": "目前圖層",
-    "error": "地圖中沒有可見的影像圖層。"
-  },
-  "imageSelector": {
-    "title": "圖片選擇器",
-    "enable": "啟用圖片選擇器",
-    "secondary": "將作用中設為比較圖層。",
-    "dropDown": "在下拉式清單中顯示圖片。",
-    "refresh": "根據目前的範圍重新整理查詢。",
-    "show": "顯示",
-    "age": "年齡",
-    "zoom": "放大以選擇圖片。",
-    "error": "地圖中沒有可見的影像圖層。",
-    "error1": "欄位未指定。",
-    "error2": "無 OBJECTID 欄位。",
-    "error3": "無類別欄位。",
-    "error4": "無法執行圖層的動作。",
-    "error5": "不支援依照 10.2.1 的服務。",
-    "error6": "目前的範圍中沒有場景。",
-    "error7": "選擇的輪廓數量超過 20。只會顯示前 20 個。按下「確定」不會再次警告。",
-    "slider": "在滑桿上顯示圖片。"
-  },
-  "changeDetection": {
-    "title": "變更偵測",
-    "mode": "模式",
-    "method": "方法",
-    "positive": "正差異",
-    "negative": "負差異",
-    "threshold": "閾值",
-    "difference": "差異",
-    "apply": "套用",
-    "error": "「變更偵測」使用來自相同服務的不同日期的兩張圖片。<br />首先使用「圖片選擇器」定義一張圖片，<br />然後按一下 <img src='images/down.png' height='14'/> 按鈕並選擇第二張圖片。<br />返回此控制項以繼續變更偵測。"
-  },
-  "editor": {
-    "title": "編輯器",
-    "error": "未選擇「編輯圖層」。",
-    "error1": "拒絕存取。圖層無法編輯。"
+  "visit": {
+    "title": "請造訪",
+    "visit": "造訪屬性",
+    "image": "圖片屬性",
+    "addText": "選擇符號並按一下地圖。",
+    "next": "下一步",
+    "prev": "上一步",
+    "error": "拒絕存取。 無法編輯圖層。",
+    "edit": "編輯備註",
+    "save": "儲存",
+    "filter": "按造訪狀態篩選",
+    "all": "全部",
+    "record": "記錄",
+    "of": "/",
+    "error1": "請輸入有效的數值。",
+    "layer": "圖層切換",
+    "imageLayer": "影像",
+    "visitLayer": "請造訪",
+    "notesLayer": "注意事項",
+    "layerError": "地圖中未出現圖層。",
+    "follow": "關注我們",
+    "okay": "好的",
+    "noStat": "無狀態",
+    "left": "左",
+    "up": "上",
+    "down": "下",
+    "right": "右",
+    "center": "居中對齊",
+    "press": "按",
+    "scan": "掃描圖片",
+    "scale": "重設比例",
+    "view": "重設檢視",
+    "search": "正在搜尋..."
   },
   "measurement": {
     "title": "圖像測量",
     "error": "不支援「測量能力」。"
   },
-  "export": {
-    "title": "匯出",
-    "mode": "模式",
-    "titleText": "標題",
-    "description": "說明",
-    "tags": "標記",
-    "submit": "提交",
-    "pixel": "像素大小",
-    "outsr": "輸出空間參考",
-    "renderer": "目前渲染器",
-    "extent": "定義範圍",
-    "text": "若勾選「目前渲染器」，則會匯出<br />渲染，否則將匯出<br/>原始資料值。",
-    "error": "地圖上沒有可見的影像圖層。",
-    "error1": "標題為必填項。",
-    "error2": "標記為必填項。"
-  },
-  "compare": {
-    "title": "比較",
-    "slider": "透明度滑桿",
-    "hSwipe": "水平撥動",
-    "vSwipe": "垂直撥動",
-    "error": "沒有可供比較的可見影像圖層。"
+  "about": {
+    "title": "關於"
   }
 });
