@@ -1,7 +1,11 @@
 # image-visit-template
-Image Visit (beta) is a configurable app template that allows users to quickly review the attributes of a predetermined sequence of locations in imagery. The app optimizes workflows by loading the next image while the user is still viewing the current image, reducing the delay caused by waiting for the next image to be returned from the server. 
+Image Visit is a configurable app template that allows users to quickly review the attributes of a predetermined sequence of locations in imagery. The app optimizes workflows by loading the next image while the user is still viewing the current image, reducing the delay caused by waiting for the next image to be returned from the server. 
+
+Check out an [example application](https://www.arcgis.com/apps/ImageVisit/index.html?appid=c092e2e099194c609350c0976540800f) built with the Image Visit template.
 
 ![App](ImageVisit.png)
+
+>There are three configurable app templates designed for imagery: [Imagery Viewer](https://github.com/Esri/imagery-viewer-template), [Image Mask](https://github.com/Esri/image-change-detection-template), and [Image Visit](https://github.com/Esri/image-visit-template/). Explore [example applications](http://arcgis.maps.arcgis.com/apps/MinimalGallery/index.html?appid=7207e9505d3e4cd4bf33e81c57190d1d) built with these templates. 
 
 ## Features
 * The app uses a "Visit" layer (an editable hosted feature layer) or a web map's bookmarks to navigate through a predetermined sequence of locations.
@@ -17,7 +21,7 @@ Possible use cases include:
 * Apps created with this template are responsively designed for display on desktops, mobile phones, and tablets  using all [browsers supported by ArcGIS Online](http://doc.arcgis.com/en/arcgis-online/reference/browsers.htm).
 
 ## Instructions
-1. To deploy this application, download the template from Portal/ArcGIS Online and unzip it.
+1. To deploy this application, download the template repo and unzip it.
 2. Copy the unzipped folder containing the web app template files, such as index.html, to your web server. You can rename the folder to change the URL through which users will access the application. By default the URL to the app will be `http://<Your Web Server>/<app folder name>/index.html`
 3. Change the sharing host, found in defaults.js inside the config folder for the application, to the sharing URL for ArcGIS Online or Portal. For ArcGIS Online users, keep the default value of www.arcgis.com or specify the name of your organization.
 
@@ -30,11 +34,13 @@ Possible use cases include:
 
 5. Copy a group ID from Portal/ArcGIS Online and replace the default group ID in the application's default.js file. You can now run the application on your web server or configure the application further.
 
+6. Read [instructions](https://doc.arcgis.com/en/arcgis-online/create-maps/create-app-templates.htm#ESRI_SECTION1_FBEEDC333D2A4765BA3F807B50AD558A) for making make the configurable template available through your organization.
+
 > **Note:** If your application edits features in a feature service, contains secure services or web maps that aren't shared publicly, or generate requests that exceed 200 characters, you may need to set up and use a proxy page. Common situations where you may exceed the URL length are using complex polygons as input to a task or specifying a spatial reference using well-known text (WKT). For details on installing and configuring a proxy page see [Using the proxy](https://developers.arcgis.com/javascript/jshelp/ags_proxy.html). If you do not have an Internet connection, you will need to access and deploy the ArcGIS API for JavaScript documentation from [developers.arcgis.com](https://developers.arcgis.com/).
 
 ## Requirements
 ### Software
-* ArcGIS Online subscription or Portal for ArcGIS
+* ArcGIS Online subscription or ArcGIS Enterprise
 
 ### Data
 * Creating an app with this template requires a web map with at least one imagery layer. 
