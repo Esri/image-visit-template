@@ -40,7 +40,7 @@ Possible use cases include:
 
 ## Requirements
 ### Software
-* ArcGIS Online subscription or ArcGIS Enterprise
+* ArcGIS Online subscription or ArcGIS Portal
 
 ### Data
 * Creating an app with this template requires a web map with at least one imagery layer. 
