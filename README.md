@@ -1,4 +1,4 @@
-# image-visit-template
+# Image Visit
 Image Visit is a configurable app template that allows users to quickly review the attributes of a predetermined sequence of locations in imagery. The app optimizes workflows by loading the next image while the user is still viewing the current image, reducing the delay caused by waiting for the next image to be returned from the server. 
 
 Check out an [example application](https://www.arcgis.com/apps/ImageVisit/index.html?appid=c092e2e099194c609350c0976540800f) built with the Image Visit template.
