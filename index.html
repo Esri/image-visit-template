@@ -13,8 +13,8 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
         <!-- End Responsive -->
         <!-- Use protocol relative urls that way if the browser is viewing the page via HTTPS the js/css file will be requested using the HTTPS protocol -->
-        <link rel="stylesheet" href="https://jsdev.arcgis.com/3.27/dijit/themes/claro/claro.css">
-        <link rel="stylesheet" href="https://jsdev.arcgis.com/3.27/esri/css/esri.css">
+        <link rel="stylesheet" href="https://js.arcgis.com/3.31/dijit/themes/claro/claro.css">
+        <link rel="stylesheet" href="https://js.arcgis.com/3.31/esri/css/esri.css">
         <link rel="shortcut icon" href="https://www.arcgis.com/favicon.ico">
         <!-- Load any application specific styles -->
         <link rel="stylesheet" href="css/main.css">
@@ -22,7 +22,7 @@
 
     <body class="claro app-loading">
 
-
+        
         <div class="loading-indicator">
             <div class="loading-message" id="loading_message"></div>
         </div>
@@ -36,12 +36,14 @@
                 <!--<button role="button" aria-pressed="false" id='layerContainer'  class="toolContainers"><img alt="" src='images/operationalLayer.png' class='iconNode'/></button>-->
                 <button role="button" aria-pressed="false" id='measurementContainer'  class="toolContainers"><img alt="" src='images/measurement.png' class='iconNode'/></button>
                 <button role="button" aria-pressed="false" id='basemapContainer'  class="toolContainers"><img alt="" src='images/basemap.png' class='iconNode'/></button>
+                <button role="button" aria-pressed="false" id='addContainer'  class="toolContainers"><img alt="" src='images/addData.png' class='iconNode'/></button>
             </div></div>
         <div class="mainContainer">
            <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false, liveSplitters:true" id="borderContainer">
 <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter: true, region:'leading'" id="toolsContentContainer" class="toolsContentContainer"></div>
                     
 <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter: false, region:'center'">
+    
             <div id="mapDiv" dir="ltr"></div>
 </div>
            </div>
@@ -69,7 +71,7 @@
             }
 
         </script>
-        <script type="text/javascript" src="https://jsdev.arcgis.com/3.27"></script>
+        <script type="text/javascript" src="https://js.arcgis.com/3.31/"></script>
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
         <script type="text/javascript">
             require([
@@ -93,5 +95,6 @@
                 });
             });
         </script>
+        <div id="jimu-layout-manager"></div>
     </body>
 </html>

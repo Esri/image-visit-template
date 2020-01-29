@@ -196,7 +196,13 @@
                         "label":"Add a Layer Toggle tool so users can turn imagery, notes, and visit layers on and off",
                         "fieldName":"layerFlag",
                         "tooltip":"Layer Toggle"
-                }
+                },
+				{
+					"type":"boolean",
+                        "label":"Add the Add Data widget to let users add data from ArcGIS Online",
+                        "fieldName":"addDataFlag",
+                        "tooltip":"Add data from ArcGIS Online"
+				}
                 
                 ]
                 },
@@ -219,7 +225,7 @@
                 },
                 {
                         "type":"paragraph",
-                        "value":"<p style='text-align:justify;font-family:verdana;'>Note: The app will use the topmost imagery layer from your web map. To use a different imagery layer, reorganize your web map. Also, if Image Attributes aren’t appearing in your app, be sure the imagery layer popup is configured in your web map.</p>"
+                        "value":"<p style='text-align:justify;font-family:verdana;'>Note: The app will use the topmost imagery layer from your web map. To use a different imagery layer, reorganize your web map. Also, if Image Attributes arenï¿½t appearing in your app, be sure the imagery layer popup is configured in your web map.</p>"
                         },
                 {
                 "type":"scaleList",
@@ -275,6 +281,27 @@
                                         "esriFieldTypeGlobalID",
                                         "esriFieldTypeXML"
                                 ]
+                        }, 
+                        {
+                                "multipleSelection": false,
+                                "fieldName": "additionalField",
+                                "label": "(Optional) Select an additional field to filter the results:",
+                                "tooltip": "",
+                                "supportedTypes":[
+                                        "esriFieldTypeSmallInteger",
+                                        "esriFieldTypeInteger",
+                                        "esriFieldTypeSingle",
+                                        "esriFieldTypeDouble",
+                                        "esriFieldTypeString",
+                                        "esriFieldTypeDate",
+                                        "esriFieldTypeOID",
+                                        "esriFieldTypeGeometry",
+                                        "esriFieldTypeBlob",
+                                        "esriFieldTypeRaster",
+                                        "esriFieldTypeGUID",
+                                        "esriFieldTypeGlobalID",
+                                        "esriFieldTypeXML"
+                                ]
                         }
                         ],
                         "layerOptions":{
@@ -286,7 +313,7 @@
                 {
                 "type": "string",
                         "fieldName":"visitStatusFilter",
-                        "label":"(Optional) Choose a default status value to filter the initial Visit locations:",
+                        "label":"(Optional) Choose a default Status value to filter the initial Visit locations:",
                         "stringFieldOption": "textbox",
                         "placeHolder": ""
                 },
@@ -344,6 +371,20 @@
                                         "esriFieldTypeString",
                                         "esriFieldTypeDate"
                                 ]
+                        },
+                        {
+                                "multipleSelection": false,
+                                "fieldName": "imageLayerField",
+                                "label": "(Optional) Select a field to record the FID/OBJECTID of the imagery layer:",
+                                "tooltip": "",
+                                "supportedTypes":[
+                                        "esriFieldTypeSmallInteger",
+                                       "esriFieldTypeInteger",
+                                       "esriFieldTypeSingle",
+                                       "esriFieldTypeDouble",
+                                       "esriFieldTypeString",
+                                       "esriFieldTypeDate"
+                               ]
                         }
                                 ],
                                 "layerOptions":{
@@ -592,6 +633,7 @@
                 "scalebarStyle":"ruler",
                 "scalebarPosition":"bottom-left",
                 "layerFlag":true,
+                "addDataFlag": false,
                 "imageLayer": {"id": null},
                 "zoomLevel": "",
                 "customZoomLevel":"",

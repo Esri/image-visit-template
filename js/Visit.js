@@ -17,13 +17,13 @@ define([
     "dojo/_base/declare",
     "dojo/_base/lang", "dojo/Evented", "dojo/Deferred", "esri/TimeExtent",
     "dijit/registry", "dojo/_base/connect",
-    "dojo/html",
+    "dojo/html", "dojo/store/Memory",
     "dojo/dom-class",
     "dojo/dom", "esri/renderers/jsonUtils", 'dojo/json', "dojo/_base/array",
     "esri/dijit/editing/Editor",
     "esri/dijit/editing/TemplatePicker",
     "dojo/on", "dojo/query",
-    "esri/layers/MosaicRule",
+    "esri/layers/MosaicRule", "esri/geometry/Point",
     "esri/tasks/query",
     "esri/tasks/QueryTask",
     "esri/geometry/Extent",
@@ -35,7 +35,7 @@ define([
     "esri/geometry/Polygon", "esri/SpatialReference", "esri/tasks/ImageServiceIdentifyParameters", "esri/tasks/IdentifyTask",
     "esri/geometry/Point",
     "esri/request", "dijit/Tooltip",
-    "dijit/form/Select",
+    "dijit/form/Select", "dijit/form/FilteringSelect",
     "dijit/form/Button",
     "dijit/form/CheckBox",
     "dijit/form/NumberSpinner",
@@ -44,14 +44,14 @@ define([
     "dijit/form/DropDownButton",
     "dijit/TooltipDialog",
 ], function (declare, lang, Evented, Deferred, TimeExtent, registry, connect,
-        html,
-        domClass,
-        dom, rendererJsonUtils, Json, array,
-        Editor,
-        TemplatePicker,
-        on, query,
-        MosaicRule,
-        Query, QueryTask, Extent, locale, domConstruct, Graphic, domStyle, Circle, SimpleFillSymbol, SimpleLineSymbol, Color, webMercatorUtils, FeatureLayer, Polygon, SpatialReference, ImageServiceIdentifyParameters, IdentifyTask, Point, esriRequest, Tooltip, Select, Button, CheckBox) {
+    html, Memory,
+    domClass,
+    dom, rendererJsonUtils, Json, array,
+    Editor,
+    TemplatePicker,
+    on, query,
+    MosaicRule, Point,
+    Query, QueryTask, Extent, locale, domConstruct, Graphic, domStyle, Circle, SimpleFillSymbol, SimpleLineSymbol, Color, webMercatorUtils, FeatureLayer, Polygon, SpatialReference, ImageServiceIdentifyParameters, IdentifyTask, Point, esriRequest, Tooltip, Select, FilteringSelect, Button, CheckBox) {
 
     return declare("application.Visit", [Evented], {
         constructor: function (parameters) {
@@ -67,12 +67,19 @@ define([
         timeFormats: ["shortDateShortTime", "shortDateLEShortTime", "shortDateShortTime24", "shortDateLEShortTime24", "shortDateLongTime", "shortDateLELongTime", "shortDateLongTime24", "shortDateLELongTime24"],
         visitPopupFields: [],
         imageryPopupFields: [],
+        //filterFields: this.config.additionalField,
+        filterFieldValues: {},
         notesAttributes: {},
         postCreate: function () {
             document.getElementById("visitAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "visit"));
             document.getElementById("imageAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "image"));
             document.getElementById("layerAttributeBtn").addEventListener("click", lang.hitch(this, this.expandMenu, "layer"));
-            
+            //CHANGE
+            //int8n
+            //registry.byId("fieldFilter").addOption({label: "None", value: "None"});
+            // for(var a in this.filterFields) {
+            //     registry.byId("fieldFilter").addOption({label: this.filterFields[a], value: this.filterFields[a]});
+            // }
             registry.byId("nextBtn").on("click", lang.hitch(this, function () {
                 if (this.recordIndex < this.features.length - 1) {
                     this.recordIndex++;
@@ -93,21 +100,21 @@ define([
                 }
             }));
             registry.byId("recordIndex").on("change", lang.hitch(this, this.moveToNewRecord));
-            registry.byId("recordIndex").on("keyup", lang.hitch(this, function(evt) {
-                if(evt.key === "Enter" || evt.keyCode === 13)
-                this.moveToNewRecord(registry.byId("recordIndex").get("value"));
+            registry.byId("recordIndex").on("keyup", lang.hitch(this, function (evt) {
+                if (evt.key === "Enter" || evt.keyCode === 13)
+                    this.moveToNewRecord(registry.byId("recordIndex").get("value"));
             }));
             registry.byId("editToggle").on("change", lang.hitch(this, function (value) {
                 if (value) {
                     domStyle.set("notesEditor", "display", "block");
                     this.map.infoWindow.set("popupWindow", false);
                     this.createEditor();
-                    
+
                 } else {
                     domStyle.set("notesEditor", "display", "none");
                     this.map.infoWindow.set("popupWindow", true);
                     this._destroyEditor();
-                    this.map.setMapCursor("default");   
+                    this.map.setMapCursor("default");
                 }
             }));
 
@@ -132,6 +139,7 @@ define([
                 else
                     domStyle.set("imageAttributeContainer", "display", "none");
             }
+            
 
             if (this.visitLayer) {
                 this.createCheckBox("visitLayer", this.i18n.visitLayer);
@@ -143,11 +151,22 @@ define([
                     }
                 }
                 for (var b in this.config.visitLayer.fields) {
-                    if (this.config.visitLayer.fields[b].id === "visitOrderField")
+                    if (this.config.visitLayer.fields[b].id === "visitOrderField") {
                         this.config.orderField = this.config.visitLayer.fields[b].fields[0];
-                    if (this.config.visitLayer.fields[b].id === "statusField")
+                    }
+                    if (this.config.visitLayer.fields[b].id === "statusField") {
                         this.config.statusField = this.config.visitLayer.fields[b].fields[0];
+                    }
+                    if (this.config.visitLayer.fields[b].id === "additionalField") {
+                        this.config.additionalField = this.config.visitLayer.fields[b].fields[0];
+                    }
 
+                }
+                if (this.config.additionalField) {
+                    domStyle.set("filterValueStatus", "display", "block");
+                    dom.byId("filterFieldName").innerHTML = this.config.additionalField;
+                    //this.queryFields();
+                    //setTimeout(function() {}, 5000);
                 }
                 if (!this.config.orderField) {
                     this.config.orderField = this.visitLayer.objectIdField;
@@ -155,9 +174,9 @@ define([
                 var fieldInfos = this.visitLayer.infoTemplate && this.visitLayer.infoTemplate.info && this.visitLayer.infoTemplate.info.fieldInfos ? this.visitLayer.infoTemplate.info.fieldInfos : [];
                 var options = this.createStatusList();
                 if (options.length > 0) {
-                    registry.byId("selectFilter").addOption({label: this.i18n.all, value: "All"});
+                    registry.byId("selectFilter").addOption({ label: this.i18n.all, value: "All" });
                     for (var a in options) {
-                        registry.byId("selectFilter").addOption({label: options[a].label, value: options[a].value});
+                        registry.byId("selectFilter").addOption({ label: options[a].label, value: options[a].value });
                     }
                     if (this.config.visitStatusFilter && this.config.visitStatusFilter !== registry.byId("selectFilter").get("value")) {
                         var queryFlag = true;
@@ -208,11 +227,16 @@ define([
                 }
 
                 for (var b in this.config.notesLayer.fields) {
-                    if (this.config.notesLayer.fields[b].id === "notesLayerField")
+                    if (this.config.notesLayer.fields[b].id === "notesLayerField") {
                         this.recordVisitOBJECTID = this.config.notesLayer.fields[b].fields[0];
+                    }
+                    if (this.config.notesLayer.fields[b].id === "imageLayerField") {
+                        this.recordImageOBJECTID = this.config.notesLayer.fields[b].fields[0];
+                    }
                 }
             }
 
+            
 
             if (this.config.imageFilter && this.config.imageField && this.config.visitField && this.imageryLayer && this.visitLayer) {
                 for (var a in this.imageryLayer.fields) {
@@ -249,23 +273,36 @@ define([
             }));
 
             registry.byId("selectFilter").on("change", lang.hitch(this, this.getFeatures));
-            if (!queryFlag)
-                this.getFeatures();
+            if (!queryFlag) {
+                if (this.config.additionalField) {
+                    this.queryFields().then(lang.hitch(this, this.getFeatures));
+                } else {
+                    this.getFeatures();
+                }
+                
+            }
+             
+            
+                
             this.main.resizeTemplate();
             window.addEventListener("keydown", lang.hitch(this, this.keyPressEvent));
-            
+
             if (this.config.circleProperties.enable) {
                 var node = domConstruct.toDom("<span class='graphicInfoContainer'><span style='font-weight:bold;color: " + this.config.circleProperties.color + "'>" + (this.config.circleProperties.type === 'circle' ? "r:" : "s:") + "</span>  " + this.config.circleProperties.radius + "m</span>");
                 domConstruct.place(node, "mapDiv_root");
             }
+            //this.getFieldValues();
+            //registry.byId("fieldFilter").on("change", lang.hitch(this, this.updateFieldValueList));
+            //registry.byId("fieldFilterValue").on("change", lang.hitch(this, this.getFeatures));
             this.createTooltips();
             
-             
-                
+            
+
+
         },
         createTooltips: function () {
-            var temp = [{node: document.getElementById("prevBtn"), label: this.i18n.press + " Alt + P", position: ["below", "before", "above", "after"]},
-                {node: document.getElementById("nextBtn"), label: this.i18n.press + " Alt + N", position: ["after", "below", "above", "before"]}
+            var temp = [{ node: document.getElementById("prevBtn"), label: this.i18n.press + " Alt + P", position: ["below", "before", "above", "after"] },
+            { node: document.getElementById("nextBtn"), label: this.i18n.press + " Alt + N", position: ["after", "below", "above", "before"] }
             ];
             for (var a in temp) {
                 new Tooltip({
@@ -293,6 +330,19 @@ define([
                 domClass.add(node, "launchpad-icon-arrow-right");
             }
         },
+        // getFieldValues: function() {
+        //     this.fieldValues = [];
+
+        //     if(this.visitLayer.fields) {
+        //     for(var a in this.visitLayer.fields) {
+        //         this.filterFieldValues[this.visitLayer.fields[a]] = [];
+        //     }
+        //       //this.queryFieldCount();
+        //       this.queryFields();
+
+        //     }
+
+        // },
         getFeatures: function () {
             this.features = [];
             if (this.visitLayer) {
@@ -302,11 +352,65 @@ define([
                 this.readBookmarks();
             }
         },
+
+        queryFields: function () {
+            var deferred = new Deferred();
+            //registry.byId("fieldFilterValue").store.setData([]);
+            var query = new Query();
+
+            query.where = "1=1"
+            query.outFields = [this.config.additionalField];
+
+
+            //query.orderByFields = [this.config.orderField];
+            query.returnGeometry = false;
+            //query.outSpatialReference = new SpatialReference(this.map.spatialReference);
+            query.returnDistinctValues = true;
+            var queryTask = new QueryTask(this.visitLayer.url);
+            queryTask.execute(query, lang.hitch(this, function (result) {
+
+                if (result && result.features && result.features.length > 0) {
+
+                    var setResults = [];
+                    setResults.push({ name: "All", id: "All" });
+                    for (let i = 0; i < result.features.length; i++) {
+                        //registry.byId("fieldFilterValue").addOption({label: result.feature[i] , value: result.feature[i]});
+                        setResults.push({ name: result.features[i].attributes[this.config.additionalField], id: result.features[i].attributes[this.config.additionalField] });
+
+
+                    }
+                    //registry.byId("fieldFilterValue").store.setData(setResults);
+                    // setTimeout(function() {
+                    //     registry.byId("fieldFilterValue").set("value", "All");
+                    // }, 500);
+                    var filteringSelectBox = new FilteringSelect({
+                        id: "fieldFilterValue",
+                        store: new Memory({ data: setResults }),
+                        required: false,
+                        value: "All",
+                        onChange: lang.hitch(this, this.getFeatures)
+                    }, "fieldFilterValue").startup();
+                    
+                }
+                return deferred.resolve();
+            }), lang.hitch(this, this.errorNotification));
+            return deferred.promise;
+        },
+
+
+
         queryCountFeatureService: function () {
             var query = new Query();
             if (domStyle.get("filterVisitStatus", "display") === "block") {
-                if (registry.byId("selectFilter").get("value") !== "All")
+                if (registry.byId("selectFilter").get("value") !== "All") {
                     var statusFilter = this.config.statusField + " = '" + registry.byId("selectFilter").get("value") + "'";
+                }
+            }
+            if (domStyle.get("filterValueStatus", "display") === "block") {
+                if (registry.byId("fieldFilterValue").get("value") !== "All") {
+                    var secondFilter = this.config.additionalField + " = '" + registry.byId("fieldFilterValue").get("value") + "'";//CHANGe
+                }
+
             }
             if (statusFilter) {
                 if (this.filterVisit)
@@ -316,8 +420,14 @@ define([
             } else {
                 query.where = (this.filterVisit || "1=1");
             }
+            if (secondFilter) {
+                query.where = query.where + " AND (" + secondFilter + ")";
+            }
+
+
             var queryTask = new QueryTask(this.visitLayer.url);
             queryTask.executeForCount(query, lang.hitch(this, function (response) {
+
                 this.noOfRecords = response;
                 this.index = 0;
                 this.queryFeatures();
@@ -327,12 +437,15 @@ define([
 
         },
         queryFeatures: function () {
+
             if (this.index < this.noOfRecords) {
                 var query = new Query();
                 if (domStyle.get("filterVisitStatus", "display") === "block") {
                     if (registry.byId("selectFilter").get("value") !== "All")
                         var statusFilter = this.config.statusField + " = '" + registry.byId("selectFilter").get("value") + "'";
                 }
+
+
                 if (statusFilter) {
                     if (this.filterVisit)
                         query.where = this.filterVisit + " AND (" + statusFilter + ")";
@@ -340,6 +453,15 @@ define([
                         query.where = statusFilter;
                 } else {
                     query.where = (this.filterVisit || "1=1");
+                }
+                if (domStyle.get("filterValueStatus", "display") === "block") {
+                    if (registry.byId("fieldFilterValue").get("value") !== "All") {
+                        var secondFilter = this.config.additionalField + " = '" + registry.byId("fieldFilterValue").get("value") + "'";//CHANGe
+                    }
+
+                }
+                if (secondFilter) {
+                    query.where = query.where + " AND (" + secondFilter + ")";
                 }
                 if (this.visitPopupFields.length > 0)
                     query.outFields = this.visitPopupFields;
@@ -353,6 +475,7 @@ define([
                 query.num = this.noOfRecords;
                 var queryTask = new QueryTask(this.visitLayer.url);
                 queryTask.execute(query, lang.hitch(this, function (result) {
+
                     if (result && result.features && result.features.length > 0) {
                         this.index += result.features.length;
                         for (var a in result.features) {
@@ -375,7 +498,7 @@ define([
             for (var a in bookmarks) {
                 this.features[a] = {
                     geometry: (new Extent(bookmarks[a].extent)).getCenter(),
-                    attributes: {name: bookmarks[a].name}
+                    attributes: { name: bookmarks[a].name }
 
                 };
             }
@@ -388,12 +511,12 @@ define([
                 registry.byId("nextBtn").set("disabled", false);
                 document.getElementById("nextBtn").click();
                 html.set(document.getElementById("noOfRecords"), " " + this.features.length);
-                registry.byId("recordIndex").set("constraints", {min: 1, max: this.features.length, place: 0});
+                registry.byId("recordIndex").set("constraints", { min: 1, max: this.features.length, place: 0 });
                 domStyle.set("recordDisplay", "display", "block");
             } else {
                 domStyle.set("recordDisplay", "display", "none");
                 html.set(document.getElementById("noOfRecords"), "");
-                registry.byId("recordIndex").set("constraints", {min: 0, max: 0, place: 0});
+                registry.byId("recordIndex").set("constraints", { min: 0, max: 0, place: 0 });
                 registry.byId("nextBtn").set("disabled", true);
             }
         },
@@ -418,7 +541,7 @@ define([
                     this.createAndDisplayCircle(point);
                 }
                 registry.byId("visitContentDiv").set("content", "");
-                registry.byId("imageAttributesContent").set("content", domConstruct.toDom("<div class='searchingImageAttributes'><span style='font-size:inherit;'>"+this.i18n.search+"</span></div>"));
+                registry.byId("imageAttributesContent").set("content", domConstruct.toDom("<div class='searchingImageAttributes'><span style='font-size:inherit;'>" + this.i18n.search + "</span></div>"));
                 if (domStyle.get("bookmarkName", "display") === "block") {
                     document.getElementById("bookmarkName").innerHTML = "<span class='titleLabel'>" + this.i18n.title + ":  </span><span>" + this.features[this.recordIndex].attributes.name + "<span>";
                 }
@@ -431,15 +554,40 @@ define([
                         this.setMapExtent(point);
                     }));
                 } else {
-                    this.currentVisitFeature = {"geometry": point, attributes: this.notesAttributes};
+                    this.currentVisitFeature = { "geometry": point, attributes: this.notesAttributes };
                     this.setMapExtent(point);
                 }
+
+                if (this.imageryLayer && this.recordImageOBJECTID) {
+                    var content = {
+                        f: "json",
+                        geometry: JSON.stringify(point),
+                        geometryType: "esriGeometryPoint",
+                        returnFirstValueOnly: true,
+                        outFields: [this.imageryLayer.objectIdField]
+                    };
+                    var params = {
+                        url: this.imageryLayer.url + "/getSamples",
+                        content: content,
+                        handleAs: "json",
+                        callbackParamName: "callback"
+                    };
+                    esriRequest(params).then(lang.hitch(this, function (response) {
+
+                        this.imageLayerID = response.samples[0].attributes.OBJECTID;
+                    }));
+                }
+
+
             }
 
         },
         setMapExtent: function (point) {
             this._destroyEditor();
             this.map.centerAt(point).then(lang.hitch(this, function () {
+                if (!this.config.zoomLevel || this.config.zoomLevel === "") {
+                    this.config.zoomLevel = this.map.getScale();
+                }
                 this.map.setScale(parseInt(this.config.zoomLevel)).then(lang.hitch(this, function () {
                     if (this.config.imageFilter && this.config.visitField && this.config.imageField) {
                         this.queryImageService(this.map.extent, this.recordIndex).then(lang.hitch(this, function (result) {
@@ -466,6 +614,13 @@ define([
                     }
                 }));
             }));
+
+            if (registry.byId("editToggle").checked) {
+                domStyle.set("notesEditor", "display", "block");
+                this.map.infoWindow.set("popupWindow", false);
+                this.createEditor();
+
+            }
         },
         selectFeature: function () {
             this.map.infoWindow.set("popupWindow", false);
@@ -475,6 +630,7 @@ define([
             this.visitLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW, lang.hitch(this, function (result) {
                 if (result.length > 0)
                     this.fillVisitAttributes(result[0]);
+                
                 return dfd.resolve();
             }));
             return dfd.promise;
@@ -533,7 +689,7 @@ define([
         makeIdentifyRequest: function (geometry) {
             if (this.imageryLayer.visible) {
                 this.showImageAttributes = true;
-                this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
+                this.map.emit("click", { bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry });
                 this.map.infoWindow.set("popupWindow", true);
             }
         },
@@ -583,10 +739,10 @@ define([
                             var options = [];
                             var codedValues = this.visitLayer.fields[a].domain.codedValues;
                             for (var b in codedValues) {
-                                options.push({"label": codedValues[b].name, value: codedValues[b].code});
+                                options.push({ "label": codedValues[b].name, value: codedValues[b].code });
                             }
                         } else {
-                            var options = [{"label": this.i18n.noStat, value: this.i18n.noStat}, {"label": this.i18n.follow, value: this.i18n.follow}, {"label": this.i18n.okay, value: this.i18n.okay}];
+                            var options = [{ "label": this.i18n.noStat, value: this.i18n.noStat }, { "label": this.i18n.follow, value: this.i18n.follow }, { "label": this.i18n.okay, value: this.i18n.okay }];
                         }
                         break;
 
@@ -627,32 +783,37 @@ define([
             query.spatialRelationship = Query.SPATIAL_REL_WITHIN;
             layer.selectFeatures(query, FeatureLayer.SELECTION_NEW, lang.hitch(this, function (result) {
                 if (result && result.length > 0) {
-                    this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
+                    this.map.emit("click", { bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry });
                 } else {
                     this.fillDefaultValues();
 
-                    layer.applyEdits([graphic], null, null, lang.hitch(this, function () {
-                        layer.redraw();
-                        layer.refresh();
-                        this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
-                        setTimeout(lang.hitch(this, function() {
-                           this.map.infoWindow.set("popupWindow", true);
-                            this.map.setInfoWindowOnClick(true);
-                        }),5000);
-                        
-                    }));
+                    setTimeout(lang.hitch(this, function () {
+                        layer.applyEdits([graphic], null, null, lang.hitch(this, function () {
+                            layer.redraw();
+                            layer.refresh();
+                            this.map.emit("click", { bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry });
+                            setTimeout(lang.hitch(this, function () {
+                                this.map.infoWindow.set("popupWindow", true);
+                                this.map.setInfoWindowOnClick(true);
+                            }), 5000);
+
+                        }));
+                    }), 2000);
                 }
             }), lang.hitch(this, function () {
                 this.fillDefaultValues();
-                layer.applyEdits([graphic], null, null, lang.hitch(this, function () {
-                    layer.redraw();
-                    layer.refresh();
-                    this.map.emit("click", {bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry});
-                    setTimeout(lang.hitch(this, function() {
-                           this.map.infoWindow.set("popupWindow", true);
-                           this.map.setInfoWindowOnClick(true);
-                        }),5000);
-                }));
+                setTimeout(lang.hitch(this, function () {
+                    layer.applyEdits([graphic], null, null, lang.hitch(this, function () {
+                        layer.redraw();
+                        layer.refresh();
+                        this.map.emit("click", { bubbles: true, cancelable: true, screenPoint: this.map.toScreen(geometry), mapPoint: geometry });
+                        setTimeout(lang.hitch(this, function () {
+                            this.map.infoWindow.set("popupWindow", true);
+                            this.map.setInfoWindowOnClick(true);
+                        }), 5000);
+                    }));
+                }), 2000);
+
             }));
 
         },
@@ -687,9 +848,9 @@ define([
                     var mosaicRule = this.defaultMosaicRule;
                     var temp = false;
                 }
-                return dfd.resolve({mosaicRule: mosaicRule, flag: temp});
+                return dfd.resolve({ mosaicRule: mosaicRule, flag: temp });
             }), lang.hitch(this, function () {
-                return dfd.resolve({mosaicRule: this.defaultMosaicRule, flag: false});
+                return dfd.resolve({ mosaicRule: this.defaultMosaicRule, flag: false });
             }));
             return dfd.promise;
         },
@@ -703,7 +864,7 @@ define([
         setupEditor: function () {
             if (this.config.notesLayer.id) {
                 var layer = this.map.getLayer(this.config.notesLayer.id);
-                console.log(layer);
+
                 if (this.config.notesMode !== "copy")
                     domStyle.set("editCheckbox", "display", "block");
                 else
@@ -784,18 +945,28 @@ define([
                 domStyle.set("textEditor", "display", "block");
             }
             //domStyle.set(templatePicker.domNode.childNodes[1], "width", "100%");
+            var notesFields = {};
+            for (let a = 0; a < this.config.notesLayer.fields.length; a++) {
+                //notesFields.push(this.config.notesLayer.fields[a].fields[0]);
+                notesFields[this.config.notesLayer.fields[a].fields[0]] = "";
+            }
+            for (let i = 0; i < this.templateLayers[0].fieldInfos.length; i++) {
+                if (this.templateLayers[0].fieldInfos[i].fieldName in notesFields) {
+                    this.templateLayers[0].fieldInfos[i].isEditable = false;
+                }
+            }
             var settings = {
                 map: this.map,
                 templatePicker: templatePicker,
-                layerInfos: [{"featureLayer": this.templateLayers[0], "fieldInfos": this.templateLayers[0].fieldInfos,"disableAttributeUpdate": false}],
+                layerInfos: [{ "featureLayer": this.templateLayers[0], "fieldInfos": this.templateLayers[0].fieldInfos, "disableAttributeUpdate": false }],
                 enableUndoRedo: false,
                 toolbarVisible: false,
                 createOptions: {
                     polylineDrawTools: [Editor.CREATE_TOOL_FREEHAND_POLYLINE, Editor.CREATE_TOOL_POLYLINE],
                     polygonDrawTools: [Editor.CREATE_TOOL_FREEHAND_POLYGON, Editor.CREATE_TOOL_POLYGON, Editor.CREATE_TOOL_ELLIPSE, Editor.CREATE_TOOL_AUTOCOMPLETE,
-                        Editor.CREATE_TOOL_CIRCLE,
-                        Editor.CREATE_TOOL_TRIANGLE,
-                        Editor.CREATE_TOOL_RECTANGLE
+                    Editor.CREATE_TOOL_CIRCLE,
+                    Editor.CREATE_TOOL_TRIANGLE,
+                    Editor.CREATE_TOOL_RECTANGLE
                     ]
                 },
                 toolbarOptions: {
@@ -805,7 +976,7 @@ define([
                 }
             };
             this.map.enableSnapping();
-            
+
             this.editor = new Editor({
                 id: "featureEditor",
                 settings: settings
@@ -819,8 +990,8 @@ define([
                 for (var a = 0; a < nodes.length; a++) {
                     nodes[a].tabIndex = -1;
                 }
-                this.map.infoWindow.set("popupWindow",false);
-                console.log(this.map.infoWindow);
+                this.map.infoWindow.set("popupWindow", false);
+
                 if (this.config.notesMode === "copy")
                     this.addToNotesLayer();
             }));
@@ -828,7 +999,7 @@ define([
             this.changeToServiceRenderer(settings);
             this.editor.startup();
             this.editor.templatePicker.on("selection-change", lang.hitch(this, function (value) {
-                
+
                 if (this.editor.templatePicker.getSelected()) {
                     this.map.setMapCursor("crosshair");
                     this.templateActive = value.target._selectedCell.children[0];
@@ -879,6 +1050,16 @@ define([
                     domStyle.set("textEditor", "display", "none");
                     this.features[this.recordIndex].noteAdded = true;
                 }
+                /*var query = new Query();
+                query.geometry = evt.adds[0].geometry;
+                var queryTask = new QueryTask(this.imageryLayer.url);
+                queryTask.executeForIds(query, lang.hitch(this, function (response) {
+                console.log(response);
+                }));
+                */
+
+
+
 
                 if (evt.adds && evt.adds[0] && evt.adds.length > 0) {
                     for (var a in evt.adds[0].attributes) {
@@ -899,14 +1080,25 @@ define([
                     if (this.recordVisitOBJECTID && this.visitLayer) {
                         var objectId = this.visitLayer.objectIdField || "OBJECTID";
                         evt.adds[0].attributes[this.recordVisitOBJECTID] = this.visitAttributes[objectId];
+                        evt.adds[0].attributes[this.recordImageOBJECTID] = this.imageLayerID;
                     }
-                    if (this.editor)
+
+
+                    if (this.editor) {
                         this.editor.attributeInspector.refresh();
+                    }
+
+
                 }
+
+
+
+
+
             }));
         },
         errorNotification: function (error) {
-                     console.log(error);
+            console.log(error);
         },
         _destroyEditor: function () {
 
@@ -915,7 +1107,7 @@ define([
                 this.editor = null;
 
             }
-            
+
         },
         revertToLayerRenderer: function () {
             array.forEach(this._layerInfoParamArrayUseForRervertRenderer, function (layerInfo) {
@@ -927,18 +1119,34 @@ define([
             this._layerInfoParamArrayUseForRervertRenderer = [];
         },
         createCheckBox: function (value, label) {
-
-            domConstruct.place("<div style='margin: 0.6em;'><div id='" + value + "'></div><label for='" + value + "'>" + label + "</label></div>", "layerAttributesContent", "last");
-            var layer = this.map.getLayer(this[value].id);
-            new CheckBox({
-                checked: layer.visible,
-                onChange: lang.hitch(this, function (flag) {
-                    if (flag)
-                        this.map.getLayer(this[value].id).show();
-                    else
-                        this.map.getLayer(this[value].id).hide();
-                })
-            }, value).startup();
+            if (value) {
+                domConstruct.place("<div style='margin: 0.6em;'><div id='" + value + "'></div><label for='" + value + "'>" + label + "</label></div>", "layerAttributesContent", "last");
+                var layer = this.map.getLayer(this[value].id);
+                new CheckBox({
+                    checked: layer.visible,
+                    onChange: lang.hitch(this, function (flag) {
+                        if (flag)
+                            this.map.getLayer(this[value].id).show();
+                        else
+                            this.map.getLayer(this[value].id).hide();
+                    })
+                }, value).startup();
+            } else {
+                domConstruct.place("<div id='" + label+"_" + "' style='margin: 0.6em;'><div id='" + label + "'></div><label for='" + label + "'>" + this.map.getLayer(label).title + "</label></div>", "layerAttributesContent", "last");
+                var layer = this.map.getLayer(label);
+                new CheckBox({
+                    checked: layer.visible,
+                    onChange: lang.hitch(this, function (flag) {
+                        if (flag)
+                            this.map.getLayer(label).show();
+                        else
+                            this.map.getLayer(label).hide();
+                    })
+                }, label).startup();
+            }
+        },
+        destroyCheckBox: function (label) {
+            domConstruct.destroy(label+"_");
         },
         createAndDisplayCircle: function (point) {
             for (var s = this.map.graphics.graphics.length - 1; s >= 0; s--) {
@@ -969,7 +1177,7 @@ define([
                 var ymin = point.y - side;
                 var ymax = point.y + side;
 
-                var polygonJson = {"rings": [[[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin], [xmin, ymin]]], "spatialReference": point.spatialReference.toJson()};
+                var polygonJson = { "rings": [[[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin], [xmin, ymin]]], "spatialReference": point.spatialReference.toJson() };
                 var geometry = new Polygon(polygonJson);
                 if (convertToWebM)
                     geometry = webMercatorUtils.webMercatorToGeographic(geometry);
@@ -977,33 +1185,33 @@ define([
             var circleSymbol = new SimpleFillSymbol();
             circleSymbol.setStyle(SimpleFillSymbol.STYLE_NULL);
             circleSymbol.setOutline(new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(this.config.circleProperties.color), this.config.circleProperties.width));
-            var graphic = new Graphic(geometry, circleSymbol, {distanceCircle: true});
+            var graphic = new Graphic(geometry, circleSymbol, { distanceCircle: true });
             this.map.graphics.add(graphic);
         },
-        
+
         keyPressEvent: function (event) {
             var keyCode = event.which;
             if (event.altKey) {
                 switch (keyCode) {
                     case 80:
-                    {
-                        document.getElementById("prevBtn").click();
-                        break;
-                    }
+                        {
+                            document.getElementById("prevBtn").click();
+                            break;
+                        }
                     case 78:
-                    {
-                        document.getElementById("nextBtn").click();
-                        break;
-                    }
-                   
+                        {
+                            document.getElementById("nextBtn").click();
+                            break;
+                        }
+
                 }
-            } 
+            }
         },
         showLoading: function () {
-            domStyle.set("loadingContentPane", "display", "block");
+            domStyle.set("mapLoadingOverlay", "display", "block");
         },
         hideLoading: function () {
-            domStyle.set("loadingContentPane", "display", "none");
+            domStyle.set("mapLoadingOverlay", "display", "none");
         }
     });
 });
