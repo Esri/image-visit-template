@@ -18,9 +18,10 @@
 define({
 //Default configuration settings for the application. This is where you'll define things like a bing maps key,
 //default web map, default app color theme and more. These values can be overwritten by template configuration settings and url parameters.
-    "appid": "",
+    //"appid": "c092e2e099194c609350c0976540800f",
+    "appid":"",
     "webmap": "12c82a217dda41a2aae7ba166345d990",
-    "oauthappid":  "arcgisWebApps",
+    "oauthappid":  "",
     //Group templates must support a group url parameter. This will contain the id of the group.
     "group": "",
     //Enter the url to the proxy if needed by the application. See the 'Using the proxy page' help topic for details
@@ -32,14 +33,14 @@ define({
     // Define the title and description text that appears on the panel
     "title": "Image Visit",
     "description": "",
-    "background": "#000",
+    "background": "#005ce6",
     "color": "#fff",
-    "widgetTitleColor": "#008299",
-    "toolsIconColor": "#008299",
-    "toolOnByDefault": "none",
+    "widgetTitleColor": "#00a884",
+    "toolsIconColor": "#00a884",
+    "toolOnByDefault": "about",
     "visitStatusFilter": "All",
     "aboutFlag": false,
-    "aboutText": "",
+    "aboutText":  "",
     "basemapFlag": true,
     "scalebarFlag": true,
     "scalebarUnit": "metric",
@@ -53,8 +54,8 @@ define({
     "imageFilterFlag": false,
     "visitFilterField": "",
     "imageFilterField": "",
-    "userNotesFlag": false,
-    "notesLayer": {"id": null,"fields":[]},
+    "userNotesFlag": true,
+    "notesLayer":{"id": null,"fields":[]},
     "notesMode": "",
     "distanceCircleFlag": false,
     "graphicType": "circle",
@@ -70,7 +71,7 @@ define({
     "disableGeometryUpdate": false,
     // Define background and text colors for the app.
     "mapZoom": true, // set to false to disable map zoom slider
-    "search": false, // Search Tool
+    "search": true, // Search Tool
     "searchExtent": true,
     "searchLayers": [{
             "id": "",
@@ -82,17 +83,19 @@ define({
     "bitlyKey": "R_b8a169f3a8b978b9697f64613bf1db6d",
     "helperServices": {
         "geometry": {
-            "url": null
+            "url": "null"
         },
         "printTask": {
-            "url": null
+            "url": "null"
         },
         "elevationSync": {
-            "url": null
+            "url": "null"
         },
         "geocode": [{
-                "url": null
+                "url": "null"
             }]
     },
-    "customstyle": null
+    "customstyle": null,
+    "addDataFlag":false,
+    "portalUrl": "www.arcgis.com"
 });

@@ -31,19 +31,22 @@ define([
     "dijit/Dialog", "dojo/parser",
     "dijit/registry",
     "dojo/text!application/templates/Visit.html",
+    "dojo/text!application/templates/AddData.html",
     "dijit/Tooltip",
     "esri/arcgis/utils",
     "application/MapUrlParams",
      "application/Basemap", "application/Measurement", "application/Visit",
+     "application/AddData",
     "dojo/domReady!"
 ], function (
         declare, lang, kernel,
         on, query, focus,
         Deferred, Scalebar, Search, Locator, SearchSources,
         dom, ArcGISImageServiceLayer, domConstruct, domStyle, html, domClass, Dialog, parser,
-        registry, visitHtml, Tooltip,
+        registry, visitHtml,addDataHtml, Tooltip,
         arcgisUtils,
-        MapUrlParams, Basemap, Measurement, Visit
+        MapUrlParams, Basemap, Measurement, Visit,
+        AddData
         ) {
     return declare(null, {
         config: {},
@@ -140,8 +143,6 @@ define([
             for (var a in cssRules) {
                 style.sheet.insertRule(a + "{" + cssRules[a] + "}", style.sheet.cssRules.length);
             }
-
-
         },
         reportError: function (error) {
             // remove loading class from body
@@ -193,6 +194,14 @@ define([
                 domConstruct.place('<img id="loadingMap" style="position: absolute;top:0;bottom: 0;left: 0;right: 0;margin:auto;z-index:100;display:none;" src="images/loading.gif">', "mapDiv_root");
                 this.map.on("update-start", lang.hitch(this, this.showLoading));
                 this.map.on("update-end", lang.hitch(this, this.hideLoading));
+                //this.config.addedLayers = [];
+                this.map.on("layer-add", lang.hitch(this, function(layer) {
+                    //this.config.addedLayers.push(layer.layer.id);
+                    this.visitFunction.createCheckBox(null, layer.layer.id);
+                }));
+                this.map.on("layer-remove", lang.hitch(this, function(layer) {
+                    this.visitFunction.destroyCheckBox(layer.layer.id);
+                }));
                 this.findAndReplaceCacheImageService();
                 if (!this.config.imageLayer.id)
                     this.findTopMostImageService();
@@ -220,6 +229,12 @@ define([
                     this.setupVisit();
                 } else
                     domStyle.set("visitContainer", "display", "none");
+                
+                if (this.config.addDataFlag) {
+                    this.dockToolsActive++;
+                    this.setupAddData();
+                } else
+                    domStyle.set("addContainer", "display", "none");
 
 
                 if (this.dockToolsActive > 0)
@@ -495,6 +510,15 @@ define([
             this.measurementFunction = new Measurement({map: this.map, config: config});
             this.addClickEvent("measurementContainer", this.measurementFunction, "measurementNode");
         },
+        setupAddData: function() {
+            //dom.byId("addDataContainer").innerHTML = addDataHtml;
+            this.setupToolContent("addDataContainer", 2, addDataHtml, this.config.i18n.visit.title, "addNode", null);
+            this.addFunction = new AddData({ map: this.map, config: this.config, i18n: this.config.i18n.addData});
+            //this.addFunction.postCreate();
+            //this.addFunction.startup();
+            this.addClickEvent("addContainer", this.addFunction, "addNode");
+            //coordinateTool.onOpen();
+        },
         setupVisit: function () {
             if (this.map.infoWindow) {
                 //this.map.infoWindow.set("popupWindow", true);
@@ -521,6 +545,7 @@ define([
                     imageFilter: this.config.imageFilterFlag,
                     visitStatusFilter: this.config.visitStatusFilter,
                     layerToggle: this.config.layerFlag,
+                    
                     circleProperties: {enable: this.config.distanceCircleFlag,type:this.config.graphicType, color: this.config.circleColor, radius: this.config.radius, width: this.config.thickness}
                     
                 };
@@ -639,9 +664,11 @@ define([
         
         showLoading: function () {
             domStyle.set("loadingMap", "display", "block");
+            //domClass.add(document.body, "app-loading");
         },
         hideLoading: function () {
             domStyle.set("loadingMap", "display", "none");
+            //domClass.remove(document.body, "app-loading");
         },
         _updateTheme: function () {
             var bgColor = this.config.background;

@@ -10,6 +10,14 @@
         <label for="selectFilter">${config.i18n.visit.filter}: </label>
         <select id="selectFilter" data-dojo-type="dijit/form/Select"></select>
     </div>
+    <!-- <div id="filterFieldStatus" style="display: block;padding: 0.8em;">
+        <label for="fieldFilter">Filter by field: </label>
+        <select id="fieldFilter" data-dojo-type="dijit/form/Select"></select>
+    </div> -->
+    <div id="filterValueStatus" style="display: none;padding: 0.8em;">
+        <label for="fieldVFilterValue">${config.i18n.visit.additionalFilter} </label><label for="fieldName" id="filterFieldName"></label>: 
+        <select id="fieldFilterValue"></select>
+    </div>
     <div id="recordDisplay" style="padding: 0.8em;display: none;">
         <span>${config.i18n.visit.record}:</span><input id="recordIndex" data-dojo-type="dijit/form/NumberTextBox" style="width: 20%;" data-dojo-props="constraints:{place:0,min:1},invalidMessage:'${config.i18n.visit.error1}', rangeMessage: '${config.i18n.visit.error1}'"/>&nbsp;&nbsp;${config.i18n.visit.of}<span id="noOfRecords"></span>
     </div>
